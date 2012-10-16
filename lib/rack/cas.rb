@@ -1,6 +1,7 @@
 require 'rack'
 require 'addressable/uri'
 require 'rack-cas/server'
+require 'rack-cas/cas_request'
 
 class Rack::CAS
   attr_accessor :server_url
@@ -8,29 +9,47 @@ class Rack::CAS
   def initialize(app, config={})
     @app = app
     @server_url = config.delete(:server_url)
+    @session_store = config.delete(:session_store)
     @config = config
 
     raise ArgumentError, 'server_url is required' if @server_url.nil?
+    if @session_store && !@session_store.respond_to?(:destroy_session_by_cas_ticket)
+      raise ArgumentError, 'session_store does not support single-sign-out'
+    end
   end
 
   def call(env)
     request = Rack::Request.new(env)
+    cas_request = CASRequest.new(request)
 
-    if ticket_validation_request?(request)
-      user, extra_attrs = get_user(request)
+    if cas_request.ticket_validation?
+      log env, 'rack-cas: Intercepting ticket validation request.'
 
-      store_session request, user, extra_attrs
-      return redirect_to ticketless_url(request)
+      user, extra_attrs = get_user(request.url, cas_request.ticket)
+
+      store_session request, user, cas_request.ticket, extra_attrs
+      return redirect_to cas_request.service_url
     end
 
-    if logout_request?(request)
+    if cas_request.logout?
+      log env, 'rack-cas: Intercepting logout request.'
+
       request.session.clear
       return redirect_to server.logout_url.to_s
     end
 
+    if cas_request.single_sign_out? && @session_store
+      log env, 'rack-cas: Intercepting single-sign-out request.'
+
+      @session_store.destroy_session_by_cas_ticket(cas_request.ticket)
+      return [200, {'Content-Type' => 'text/plain'}, ['CAS Single-Sign-Out request intercepted.']]
+    end
+
     response = @app.call(env)
 
-    if access_denied_response?(response)
+    if response[0] == 401 # access denied
+      log env, 'rack-cas: Intercepting 401 access denied response. Redirecting to CAS login.'
+
       redirect_to server.login_url(request.url).to_s
     else
       response
@@ -43,37 +62,26 @@ class Rack::CAS
     @server ||= RackCAS::Server.new(@server_url)
   end
 
-  def logout_request?(request)
-    request.path_info == '/logout'
+  def get_user(service_url, ticket)
+    server.validate_service(service_url, ticket)
   end
 
-  def ticket_validation_request?(request)
-    !get_ticket(request).nil?
-  end
-
-  def access_denied_response?(response)
-    response[0] == 401
-  end
-
-  def ticketless_url(request)
-    RackCAS::URL.parse(request.url).remove_param('ticket').to_s
-  end
-
-  def get_ticket(request)
-    request.params['ticket']
-  end
-
-  def get_user(request)
-    server.validate_service(request.url, get_ticket(request))
-  end
-
-  def store_session(request, user, extra_attrs = {})
+  def store_session(request, user, ticket, extra_attrs = {})
     request.session['cas'] = {}
     request.session['cas']['user'] = user
+    request.session['cas']['ticket'] = ticket
     request.session['cas']['extra_attributes'] = extra_attrs
   end
 
   def redirect_to(url, status=302)
     [ status, { 'Location' => url, 'Content-Type' => 'text/plain' }, ["Redirecting you to #{url}"] ]
+  end
+
+  def log(env, message, level = :info)
+    if env['rack.logger']
+      env['rack-logger'].send(level, message)
+    else
+      env['rack.errors'].write(message)
+    end
   end
 end
