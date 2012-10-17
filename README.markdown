@@ -11,10 +11,12 @@ Works with but doesn't depend on Rails, Sinatra, etc.
 Current gem dependencies are [rack](http://rubygems.org/gems/rack), [addressable](http://rubygems.org/gems/addressable) and [nokogiri](http://rubygems.org/gems/nokogiri).
 * __Supports CAS extra attributes__  
 Extra attributes are a mess though. So let me know if your brand of CAS server isn't supported.
+* __Single sign out__  
+One of the included session stores must be used.
 
 Coming Soon
 ===========
-* __Single-sign-out__
+* __Single sign out compatible session store for Active Record__
 
 Requirements
 ============
@@ -34,6 +36,28 @@ Then in your `config.ru` file add
 
     require 'rack/cas'
     use Rack::CAS, server_url: 'https://login.example.com/cas'
+
+Single Sign Out
+---------------
+Support for [single sign out](https://wiki.jasig.org/display/CASUM/Single+Sign+Out) requires the use of one of the included session stores listed below.
+
+* Mongoid
+
+To use the session store with Rails add the following to your `config/initializers/session_store.rb` file:
+
+    require 'rack-cas/session_store/rails/mongoid'
+    YourApp::Application.config.session_store :mongoid_store
+
+For other Rack-compatible frameworks, add the following to your config.ru file:
+
+    requre 'rack-cas/sessions_store/rack/mongoid'
+    use Rack::Session::MongoidStore
+
+Then tell the RackCAS where to find your sessions:
+
+    require 'rack/cas'
+    require 'rack-cas/session_store/mongoid'
+    use Rack::CAS server_url: 'http://login.example.com/cas', session_store: RackCAS:MongoidStore
 
 Integration
 ===========
@@ -71,4 +95,4 @@ Then you can simply do the following in your integration tests in order to log i
     fill_in 'password', with: 'any password'
     click_button 'Login'
 
-__Note:__ The FakeCAS middleware will authenticate any username with any password and so should never be used in production.
+__NOTE:__ The FakeCAS middleware will authenticate any username with any password and so should never be used in production.
