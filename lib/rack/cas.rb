@@ -67,10 +67,7 @@ class Rack::CAS
   end
 
   def store_session(request, user, ticket, extra_attrs = {})
-    request.session['cas'] = {}
-    request.session['cas']['user'] = user
-    request.session['cas']['ticket'] = ticket
-    request.session['cas']['extra_attributes'] = extra_attrs
+    request.session['cas'] = { 'user' => user, 'ticket' => ticket, 'extra_attributes' => extra_attrs }
   end
 
   def redirect_to(url, status=302)
