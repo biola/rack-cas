@@ -14,7 +14,7 @@ Extra attributes are a mess though. So let me know if your brand of CAS server i
 
 Coming Soon
 ===========
-* __Single sign out__
+* __Single-sign-out__
 
 Requirements
 ============
@@ -45,3 +45,30 @@ Once authentication with the CAS server has completed, Rack-CAS will set the fol
     request.session['cas']['extra_attributes'] #=> { 'first_name' => 'John', 'last_name' => ... }
 
 __NOTE:__ `extra_attributes` will be an empty hash unless they've been [configured on your CAS server](http://code.google.com/p/rubycas-server/wiki/HowToSendExtraUserAttributes).
+
+Testing
+=======
+
+Controller Tests
+----------------
+Testing your controllers and such should be as simple as setting the session variables manually in a helper.
+
+    def set_current_user(user)
+      session['cas'] = { 'user' => user.username, 'extra_attributes' => {} }
+    end
+
+Integration Tests
+-----------------
+Integration testing using something like [Capybara](http://jnicklas.github.com/capybara/) is a bit trickier because the session can't be manipulated directly. So for integration tests, I recommend using the provided `Rack::FakeCAS` middleware instead of `Rack::CAS`.
+
+    require 'rack/fake_cas'
+    use Rack::FakeCAS
+
+Then you can simply do the following in your integration tests in order to log in.
+
+    visit '/restricted_path'
+    fill_in 'username', with: 'johndoe'
+    fill_in 'password', with: 'any password'
+    click_button 'Login'
+
+__Note:__ The FakeCAS middleware will authenticate any username with any password and so should never be used in production.
