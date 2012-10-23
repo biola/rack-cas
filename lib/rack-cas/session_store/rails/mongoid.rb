@@ -3,7 +3,7 @@ require 'action_dispatch/middleware/session/abstract_store'
 
 module ActionDispatch
   module Session
-    class RackCASMongoidStore < AbstractStore
+    class RackCasMongoidStore < AbstractStore
       include RackCAS::MongoidStore
     end
   end
