@@ -6,17 +6,13 @@ Features
 ========
 * __Rack based__
 * __Framework independent__  
-Works with but doesn't depend on Rails, Sinatra, etc.
+Works with, but doesn't depend on Rails, Sinatra, etc.
 * __Minimal dependencies__  
 Current gem dependencies are [rack](http://rubygems.org/gems/rack), [addressable](http://rubygems.org/gems/addressable) and [nokogiri](http://rubygems.org/gems/nokogiri).
 * __Supports CAS extra attributes__  
 Extra attributes are a mess though. So let me know if your brand of CAS server isn't supported.
 * __Single sign out__  
 One of the included session stores must be used.
-
-Coming Soon
-===========
-* __Single sign out compatible session store for Active Record__
 
 Requirements
 ============
@@ -26,38 +22,68 @@ Requirements
 Installation
 ============
 
-    gem install rack-cas
+Rails
+-----
 
-Or for [Bundler](http://gembundler.com):
+Add `gem 'rack-cas'` to your [`Gemfile`](http://gembundler.com/gemfile.html) and run `bundle install`
 
-    gem 'rack-cas'
+Create `config/initializers/rack-cas.rb` with the following:
 
-Then in your `config.ru` file add
+    require 'rack/cas'
+    YourApp::Application.config.middleware.use Rack::CAS, server_url: 'https://login.example.com/cas'
+
+### Single Sign Out ###
+
+If you wish to enable [single sign out](https://wiki.jasig.org/display/CASUM/Single+Sign+Out) you'll need to modify your configuration as below.
+
+#### Active Record ####
+
+Set the `session_store` in `config/initialiers/rack-cas.rb`
+
+    require 'rack/cas'
+    require 'rack-cas/session_store/active_record'
+    YourApp::Application.config.middleware.use Rack::CAS,
+      server_url: 'https://login.example.com/cas',
+      session_store: RackCAS::ActiveRecordStore
+
+Edit your `config/initializers/session_store.rb` file with the following:
+
+    require 'rack-cas/session_store/rails/active_record'
+    YourApp::Application.config.session_store :rack_cas_active_record_store
+
+Run:
+
+    rails generate cas_session_store_migration
+    rake db:migrate
+
+#### Mongoid ####
+
+Set the `session_store` in `config/initialiers/rack-cas.rb`
+
+    require 'rack/cas'
+    require 'rack-cas/session_store/mongoid'
+    YourApp::Application.config.middleware.use Rack::CAS,
+      server_url: 'https://login.example.com/cas',
+      session_store: RackCAS::MongoidStore
+
+Edit your `config/initializers/session_store.rb` file with the following:
+
+    require 'rack-cas/session_store/rails/mongoid'
+    YourApp::Application.config.session_store :rack_cas_mongoid_store
+
+Sinatra and Other Rack-Compatible Frameworks
+--------------------------------------------
+
+Add `gem 'rack-cas'` to your [`Gemfile`](http://gembundler.com/gemfile.html) and run `bundle install`
+
+Add the following to your `config.ru` file:
 
     require 'rack/cas'
     use Rack::CAS, server_url: 'https://login.example.com/cas'
 
-Single Sign Out
----------------
-Support for [single sign out](https://wiki.jasig.org/display/CASUM/Single+Sign+Out) requires the use of one of the included session stores listed below.
+### Single Sign Out ###
 
-* Mongoid
-
-To use the session store with Rails add the following to your `config/initializers/session_store.rb` file:
-
-    require 'rack-cas/session_store/rails/mongoid'
-    YourApp::Application.config.session_store :mongoid_store
-
-For other Rack-compatible frameworks, add the following to your config.ru file:
-
-    requre 'rack-cas/sessions_store/rack/mongoid'
-    use Rack::Session::RackCASMongoidStore
-
-Then tell the RackCAS where to find your sessions:
-
-    require 'rack/cas'
-    require 'rack-cas/session_store/mongoid'
-    use Rack::CAS server_url: 'http://login.example.com/cas', session_store: RackCAS:MongoidStore
+Single sign out support outside of Rails is currently untested. We'll be adding instructions here soon.
 
 Integration
 ===========
