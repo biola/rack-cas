@@ -51,7 +51,7 @@ To use the session store with Rails add the following to your `config/initialize
 For other Rack-compatible frameworks, add the following to your config.ru file:
 
     requre 'rack-cas/sessions_store/rack/mongoid'
-    use Rack::Session::MongoidStore
+    use Rack::Session::RackCASMongoidStore
 
 Then tell the RackCAS where to find your sessions:
 
