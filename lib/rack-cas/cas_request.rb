@@ -7,10 +7,8 @@ class CASRequest
 
   def ticket
     @ticket ||= if single_sign_out?
-      xml = Nokogiri::XML(@request.params['logoutRequest']).tap do |xml|
-        xml.remove_namespaces!
-      end
-      node = xml.at('/LogoutRequest/SessionIndex')
+      xml = Nokogiri::XML(@request.params['logoutRequest'])
+      node = xml.root.children.find { |c| c.name =~ /SessionIndex/i }
       node.text unless node.nil?
     else
       @request.params['ticket']
