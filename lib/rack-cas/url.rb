@@ -34,17 +34,7 @@ module RackCAS
     end
 
     def dup
-      duplicated_uri = RackCAS::URL.new(
-        :scheme => self.scheme ? self.scheme.dup : nil,
-        :user => self.user ? self.user.dup : nil,
-        :password => self.password ? self.password.dup : nil,
-        :host => self.host ? self.host.dup : nil,
-        :port => self.port,
-        :path => self.path ? self.path.dup : nil,
-        :query => self.query ? self.query.dup : nil,
-        :fragment => self.fragment ? self.fragment.dup : nil
-      )
-      return duplicated_uri
+      RackCAS::URL.new(super.to_hash)
     end
   end
 end

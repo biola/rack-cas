@@ -16,4 +16,7 @@ spec = Gem::Specification.new do |s|
   s.add_dependency('rack')
   s.add_dependency('addressable', '>= 2.3')
   s.add_dependency('nokogiri')
+  s.add_development_dependency('rspec', '~> 2.11.0')
+  s.add_development_dependency('rack-test')
+  s.add_development_dependency('webmock')
 end

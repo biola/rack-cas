@@ -1,0 +1,62 @@
+<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+  <cas:authenticationSuccess>
+    <cas:user>johnd0</cas:user>
+    <cn>
+      <![CDATA[--- 
+- johnd0
+]]>
+    </cn>
+    <title>
+      <![CDATA[--- 
+- Imaginary Person
+]]>
+    </title>
+    <employeeId>
+      <![CDATA[--- 
+- "00000"
+]]>
+    </employeeId>
+    <eduPersonEntitlement>
+      <![CDATA[--- 
+- urn:example:thing:admin
+- urn:example:whatsit:viewer
+]]>
+    </eduPersonEntitlement>
+    <eduPersonNickname>
+      <![CDATA[--- 
+- John
+]]>
+    </eduPersonNickname>
+    <sn>
+      <![CDATA[--- 
+- Doe
+]]>
+    </sn>
+    <mail>
+      <![CDATA[--- 
+- john.doe@example.com
+]]>
+    </mail>
+    <eduPersonPrincipalname>
+      <![CDATA[--- 
+- john.doe
+]]>
+    </eduPersonPrincipalname>
+    <department>
+      <![CDATA[--- 
+- Imaginary Department
+]]>
+    </department>
+    <eduPersonAffiliation>
+      <![CDATA[--- 
+- employee
+]]>
+    </eduPersonAffiliation>
+    <memberOf>
+      <![CDATA[--- 
+- CN=Testing,OU=Departments,DC=example,DC=com
+- CN=Employees,OU=Security Groups,DC=example,DC=com
+]]>
+    </memberOf>
+  </cas:authenticationSuccess>
+</cas:serviceResponse>

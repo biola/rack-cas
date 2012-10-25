@@ -39,6 +39,7 @@ module RackCAS
     protected
 
     def response
+      require 'net/http'
       return @response unless @response.nil?
       
       http = Net::HTTP.new(@url.host, @url.inferred_port)

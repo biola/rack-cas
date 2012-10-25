@@ -1,0 +1,4 @@
+<samlp:LogoutRequest ID="1351121069rE49422041DC9540F63" Version="2.0" IssueInstant="Wed, 24 Oct 2012 16:19:58 -0700">
+ <saml:NameID></saml:NameID>
+ <samlp:SessionIndex>ST-0123456789ABCDEFGHIJKLMNOPQRS</samlp:SessionIndex>
+ </samlp:LogoutRequest>

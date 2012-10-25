@@ -1,0 +1,18 @@
+<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+  <cas:authenticationSuccess>
+    <cas:user>johnd0</cas:user>
+    <cas:attributes>
+      <cas:cn>johnd0</cas:cn>
+      <cas:title>Imaginary Person</cas:title>
+      <cas:employeeId>00000</cas:employeeId>
+      <cas:eduPersonEntitlement>urn:example:thing:admin,urn:example:whatsit:viewer</cas:eduPersonEntitlement>
+      <cas:eduPersonNickname>John</cas:eduPersonNickname>
+      <cas:sn>Doe</cas:sn>
+      <cas:mail>john.doe@example.com</cas:mail>
+      <cas:eduPersonPrincipalname>john.doe</cas:eduPersonPrincipalname>
+      <cas:department>Imaginary Department</cas:department>
+      <cas:eduPersonAffiliation>employee</cas:eduPersonAffiliation>
+      <cas:memberOf>CN=Testing,OU=Departments,DC=example,DC=com</cas:memberOf>
+    </cas:attributes>
+  </cas:authenticationSuccess>
+</cas:serviceResponse>
