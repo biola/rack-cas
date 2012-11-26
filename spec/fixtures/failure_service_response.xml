@@ -1,0 +1,5 @@
+<cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
+    <cas:authenticationFailure code="INVALID_TICKET">
+        Ticket ST-0123456789ABCDEFGHIJKLMNOPQRS not recognized
+    </cas:authenticationFailure>
+</cas:serviceResponse>

@@ -1,17 +1,25 @@
 module RackCAS
   class ServiceValidationResponse
-    REQUEST_HEADERS = { 'Accept' => '*/*' }
+    class AuthenticationFailure < StandardError; end
 
+    REQUEST_HEADERS = { 'Accept' => '*/*' }
+    
     def initialize(url)
       @url = URL.parse(url)
     end
 
     def user
-      xml.xpath('/cas:serviceResponse/cas:authenticationSuccess/cas:user').text
+      if success?
+        xml.xpath('/cas:serviceResponse/cas:authenticationSuccess/cas:user').text
+      else
+        raise AuthenticationFailure, failure_message
+      end
     end
 
     def extra_attributes
       attrs = {}
+
+      raise AuthenticationFailure, failure_message unless success?
 
       # Jasig style
       if attr_node = xml.at('/cas:serviceResponse/cas:authenticationSuccess/cas:attributes')
@@ -37,6 +45,16 @@ module RackCAS
     end
 
     protected
+
+    def success?
+      @success ||= !!xml.at('/cas:serviceResponse/cas:authenticationSuccess')
+    end
+
+    def failure_message
+      if node = xml.at('/cas:serviceResponse/cas:authenticationFailure')
+        node.text.strip
+      end
+    end
 
     def response
       require 'net/http'
