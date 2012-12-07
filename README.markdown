@@ -17,7 +17,7 @@ One of the included session stores must be used.
 Requirements
 ============
 * Ruby >= 1.9.2
-* A working [CAS server](http://code.google.com/p/rubycas-server)
+* A working [CAS server](http://rubycas.github.com)
 
 Installation
 ============
@@ -94,7 +94,7 @@ Once authentication with the CAS server has completed, Rack-CAS will set the fol
     request.session['cas']['user'] #=> johndoe
     request.session['cas']['extra_attributes'] #=> { 'first_name' => 'John', 'last_name' => ... }
 
-__NOTE:__ `extra_attributes` will be an empty hash unless they've been [configured on your CAS server](http://code.google.com/p/rubycas-server/wiki/HowToSendExtraUserAttributes).
+__NOTE:__ `extra_attributes` will be an empty hash unless they've been [configured on your CAS server](https://github.com/rubycas/rubycas-server/wiki/Extra-user-attributes).
 
 Testing
 =======
