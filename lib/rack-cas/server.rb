@@ -8,6 +8,7 @@ module RackCAS
     end
 
     def login_url(service_url)
+      service_url = URL.parse(service_url).to_s
       @url.dup.append_path('login').add_params(service: service_url)
     end
 

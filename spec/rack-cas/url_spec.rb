@@ -5,6 +5,13 @@ describe RackCAS::URL do
   let(:url_string) { 'http://example.com/path?param1=value1&param2=value2' }
   let(:url) { RackCAS::URL.parse(url_string) }
 
+  describe :'self.parse' do
+    let(:url_string) { 'http://example.com?param 1=value+1' }
+    subject { url.to_s }
+    it { should match /%20/ }
+    it { should_not match /\+/ }
+  end
+
   describe :append_path do
     subject { url.append_path('appended-path') }
     its(:path) { should eql '/path/appended-path' }
