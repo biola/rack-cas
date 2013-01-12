@@ -109,6 +109,10 @@ Integration testing using something like [Capybara](http://jnicklas.github.com/c
     require 'rack/fake_cas'
     use Rack::FakeCAS
 
+If you are using Rails, FakeCAS is automatically used in the test environment by default. If you would like to activate it in any other environment, add the following to the corresponding `config/environments/<env>.rb`:
+
+    config.rack_cas.fake = true
+
 Then you can simply do the following in your integration tests in order to log in.
 
     visit '/restricted_path'
