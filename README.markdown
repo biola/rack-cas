@@ -27,10 +27,11 @@ Rails
 
 Add `gem 'rack-cas'` to your [`Gemfile`](http://gembundler.com/gemfile.html) and run `bundle install`
 
-Create `config/initializers/rack-cas.rb` with the following:
+Once the necessary gems have been installed, in your `config/application.rb` add:
 
-    require 'rack/cas'
-    YourApp::Application.config.middleware.use Rack::CAS, server_url: 'https://login.example.com/cas'
+    config.rack_cas.server_url = 'https://cas.example.com/'
+
+If the the server URL depends on your environment, you can define it in the according file: `config/environments/<env>.rb`
 
 ### Single Sign Out ###
 
@@ -38,13 +39,10 @@ If you wish to enable [single sign out](https://wiki.jasig.org/display/CASUM/Sin
 
 #### Active Record ####
 
-Set the `session_store` in `config/initialiers/rack-cas.rb`
+Set the `session_store` in your `config/application.rb`:
 
-    require 'rack/cas'
     require 'rack-cas/session_store/active_record'
-    YourApp::Application.config.middleware.use Rack::CAS,
-      server_url: 'https://login.example.com/cas',
-      session_store: RackCAS::ActiveRecordStore
+    config.rack_cas.session_store = RackCAS::ActiveRecordStore
 
 Edit your `config/initializers/session_store.rb` file with the following:
 
@@ -58,13 +56,10 @@ Run:
 
 #### Mongoid ####
 
-Set the `session_store` in `config/initialiers/rack-cas.rb`
+Set the `session_store` in your `config/application.rb`:
 
-    require 'rack/cas'
     require 'rack-cas/session_store/mongoid'
-    YourApp::Application.config.middleware.use Rack::CAS,
-      server_url: 'https://login.example.com/cas',
-      session_store: RackCAS::MongoidStore
+    config.rack_cas.session_store = RackCAS::MongoidStore
 
 Edit your `config/initializers/session_store.rb` file with the following:
 
@@ -113,6 +108,10 @@ Integration testing using something like [Capybara](http://jnicklas.github.com/c
 
     require 'rack/fake_cas'
     use Rack::FakeCAS
+
+If you are using Rails, FakeCAS is automatically used in the test environment by default. If you would like to activate it in any other environment, add the following to the corresponding `config/environments/<env>.rb`:
+
+    config.rack_cas.fake = true
 
 Then you can simply do the following in your integration tests in order to log in.
 
