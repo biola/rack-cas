@@ -33,7 +33,7 @@ module RackCAS
     end
 
     def destroy_session(env, sid, options)
-      session = Session.where(session_id: sid).delete
+      session = Session.where(session_id: sid).delete_all
       
       options[:drop] ? nil : generate_sid
     end
