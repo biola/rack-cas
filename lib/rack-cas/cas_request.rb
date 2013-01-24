@@ -7,11 +7,9 @@ class CASRequest
 
   def ticket
     @ticket ||= if single_sign_out?
-      xml = Nokogiri::XML(@request.params['logoutRequest'])
-      node = xml.root.children.find { |c| c.name =~ /SessionIndex/i }
-      node.text unless node.nil?
-    else
-      @request.params['ticket']
+      sso_ticket
+    elsif ticket_validation?
+      ticket_param
     end
   end
 
@@ -28,6 +26,20 @@ class CASRequest
   end
 
   def ticket_validation?
-    !!@request.params['ticket']
+    # The CAS protocol specifies 32 characters as the minimum length of a
+    # service ticket (including ST-) http://www.jasig.org/cas/protocol
+    !!(@request.get? && ticket_param && ticket_param.to_s =~ /\AST\-[^\s]{29}/)
+  end
+
+  private
+
+  def ticket_param
+    @request.params['ticket']
+  end
+
+  def sso_ticket
+    xml = Nokogiri::XML(@request.params['logoutRequest'])
+    node = xml.root.children.find { |c| c.name =~ /SessionIndex/i }
+    node.text unless node.nil?
   end
 end

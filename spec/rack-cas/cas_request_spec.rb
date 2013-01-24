@@ -10,11 +10,29 @@ describe CASRequest do
 
   context 'ticket validation request' do
     before { get '/private/something?ticket=ST-0123456789ABCDEFGHIJKLMNOPQRS' }
-    its(:ticket) { should eql 'ST-0123456789ABCDEFGHIJKLMNOPQRS' }
     its(:ticket_validation?) { should be_true }
+    its(:ticket) { should eql 'ST-0123456789ABCDEFGHIJKLMNOPQRS' }
     its(:service_url) { should eql 'http://example.org/private/something?' }
     its(:logout?) { should be_false }
     its(:single_sign_out?) { should be_false }
+  end
+
+  context 'ticket POST' do
+    before { post '/private/something?ticket=ST-0123456789ABCDEFGHIJKLMNOPQRS&post=POST' }
+    its(:ticket_validation?) { should be_false }
+    its(:ticket) { should be_nil }
+  end
+
+  context 'invalid ticket' do
+    before { get '/private/something?ticket=BLARG' }
+    its(:ticket_validation?) { should be_false }
+    its(:ticket) { should be_nil }
+  end
+
+  context 'short ticket' do
+    before { get '/private/something?ticket=ST-0123456789' }
+    its(:ticket_validation?) { should be_false }
+    its(:ticket) { should be_nil }
   end
 
   context 'single sign out request' do
