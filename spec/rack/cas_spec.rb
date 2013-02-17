@@ -23,6 +23,12 @@ describe Rack::CAS do
     subject { get '/private?search=blah&ticket=ST-0123456789ABCDEFGHIJKLMNOPQRS' }
     its(:status) { should eql 302 }
     its(:location) { should eql 'http://example.org/private?search=blah' }
+
+    context 'without additional query parameters' do
+      subject { get '/private?ticket=ST-0123456789ABCDEFGHIJKLMNOPQRS' }
+      its(:status) { should eql 302 }
+      its(:location) { should eql 'http://example.org/private' }
+    end
   end
 
   describe 'logout request' do
