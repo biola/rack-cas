@@ -39,6 +39,9 @@ module RackCAS
             qv.delete key
           end
         end
+        if u.query_values.empty?
+          u.query_values = nil
+        end
       end
     end
 

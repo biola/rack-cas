@@ -26,6 +26,6 @@ describe RackCAS::Server do
 
   describe :validate_service_url do    
     subject { server.send(:validate_service_url, service_url, ticket) }
-    its(:to_s) { should eql 'http://example.com/cas/serviceValidate?service=http%3A%2F%2Fexample.org%2Fwhatever%3F&ticket=ST-0123456789ABCDEFGHIJKLMNOPQRS'}
+    its(:to_s) { should eql 'http://example.com/cas/serviceValidate?service=http%3A%2F%2Fexample.org%2Fwhatever&ticket=ST-0123456789ABCDEFGHIJKLMNOPQRS'}
   end
 end
