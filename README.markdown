@@ -80,6 +80,22 @@ Add the following to your `config.ru` file:
 
 Single sign out support outside of Rails is currently untested. We'll be adding instructions here soon.
 
+Configuration
+=============
+
+Excluding Paths
+---------------
+
+If you have some parts of your app that should not be CAS authenticated (such as an API namespace), just pass `exclude_path` to the middleware. You can pass in a string that matches the beginning of the path, a regular expression or an array of strings and regular expressions.
+
+    use Rack::CAS, server_url: '...', exclude_path: '/api'
+    use Rack::CAS, server_url: '...', exclude_path: /\.json/
+    use Rack::CAS, server_url: '...', exclude_paths: ['/api', /\.json/]
+
+The same options can be passed to `FakeCAS`.
+
+    use Rack::FakeCAS, exclude_path: '/api'
+
 Integration
 ===========
 Your app should __return a [401 status](http://httpstatus.es/401)__ whenever a request is made that requires authentication. Rack-CAS will catch these responses and attempt to authenticate via your CAS server.

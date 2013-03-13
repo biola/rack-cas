@@ -46,4 +46,14 @@ describe Rack::FakeCAS do
       it { should eql({}) }
     end
   end
+
+  describe 'excluded request' do
+    def app
+      Rack::FakeCAS.new(CasTestApp.new, exclude_path: '/private')
+    end
+
+    subject { get '/private' }
+    its(:status) { should eql 401 }
+    its(:body) { should eql 'Authorization Required' }
+  end
 end

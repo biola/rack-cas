@@ -49,4 +49,14 @@ describe Rack::CAS do
     its(:status) { should eql 200 }
     its(:body) { should eql 'CAS Single-Sign-Out request intercepted.' }
   end
+
+  describe 'excluded request' do
+    def app
+      Rack::CAS.new(CasTestApp.new, server_url: server_url, exclude_path: '/private')
+    end
+
+    subject { get '/private' }
+    its(:status) { should eql 401 }
+    its(:body) { should eql 'Authorization Required' }
+  end
 end

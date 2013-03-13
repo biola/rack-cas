@@ -1,13 +1,19 @@
 require 'rack'
+require 'rack-cas/cas_request'
 
 class Rack::FakeCAS
   def initialize(app, config={})
     @app = app
-    @config = config
+    @config = config || {}
   end
 
   def call(env)
     @request = Rack::Request.new(env)
+    cas_request = CASRequest.new(@request)
+
+    if cas_request.path_matches? @config[:exclude_paths] || @config[:exclude_path]
+      return @app.call(env)
+    end
     
     case @request.path_info
     when '/login'

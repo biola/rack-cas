@@ -31,6 +31,16 @@ class CASRequest
     !!(@request.get? && ticket_param && ticket_param.to_s =~ /\AST\-[^\s]{29}/)
   end
 
+  def path_matches?(strings_or_regexps)
+    Array(strings_or_regexps).any? do |matcher|
+      if matcher.is_a? Regexp
+        !!(@request.path_info =~ matcher)
+      elsif matcher.to_s != ''
+        @request.path_info[0...matcher.to_s.length] == matcher.to_s
+      end
+    end
+  end
+
   private
 
   def ticket_param

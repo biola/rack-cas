@@ -10,7 +10,7 @@ class Rack::CAS
     @app = app
     @server_url = config.delete(:server_url)
     @session_store = config.delete(:session_store)
-    @config = config
+    @config = config || {}
 
     raise ArgumentError, 'server_url is required' if @server_url.nil?
     if @session_store && !@session_store.respond_to?(:destroy_session_by_cas_ticket)
@@ -21,6 +21,10 @@ class Rack::CAS
   def call(env)
     request = Rack::Request.new(env)
     cas_request = CASRequest.new(request)
+
+    if cas_request.path_matches? @config[:exclude_paths] || @config[:exclude_path]
+      return @app.call(env) 
+    end
 
     if cas_request.ticket_validation?
       log env, 'rack-cas: Intercepting ticket validation request.'

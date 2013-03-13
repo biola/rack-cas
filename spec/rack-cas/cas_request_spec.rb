@@ -50,4 +50,20 @@ describe CASRequest do
     its(:single_sign_out?) { should be_false }
     its(:ticket_validation?) { should be_false }
   end
+
+  describe :path_matches? do
+    context 'matching path' do
+      before { get '/match/this/path/does' }
+      ['/match', /this/, ['/blah', /match/]].each do |matcher|
+        it { expect(subject.path_matches? matcher).to be_true }
+      end
+    end
+
+    context 'not-matching path' do
+      before { get '/something/else/that/doesnt' }
+      ['match', /match/, ['/foo', /bar/], [], nil, ''].each do |matcher|
+        it { expect(subject.path_matches? matcher).to be_false }
+      end
+    end
+  end
 end
