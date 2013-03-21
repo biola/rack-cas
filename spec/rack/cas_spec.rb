@@ -32,9 +32,17 @@ describe Rack::CAS do
   end
 
   describe 'logout request' do
-    subject { get '/logout' }
-    its(:status) { should eql 302 }
-    its(:location) { should eql 'http://example.com/cas/logout' }
+    context 'without params' do
+      subject { get '/logout' }
+      its(:status) { should eql 302 }
+      its(:location) { should eql 'http://example.com/cas/logout' }
+    end
+
+    context 'with params' do
+      subject { get '/logout', gateway: 'true', service: 'http://example.com' }
+      its(:status) { should eql 302 }
+      its(:location) { should eql 'http://example.com/cas/logout?gateway=true&service=http%3A%2F%2Fexample.com' }
+    end
   end
 
   describe 'single sign out request' do

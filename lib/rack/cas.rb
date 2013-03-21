@@ -39,7 +39,7 @@ class Rack::CAS
       log env, 'rack-cas: Intercepting logout request.'
 
       request.session.clear
-      return redirect_to server.logout_url.to_s
+      return redirect_to server.logout_url(request.params).to_s
     end
 
     if cas_request.single_sign_out? && @session_store

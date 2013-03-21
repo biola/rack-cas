@@ -13,8 +13,20 @@ describe RackCAS::Server do
   end
 
   describe :logout_url do
-    subject { server.logout_url.to_s }
-    it { should eql 'http://example.com/cas/logout' }
+    context 'without params' do
+      subject { server.logout_url.to_s }
+      it { should eql 'http://example.com/cas/logout' }
+    end
+
+    context 'with empty params' do
+      subject { server.logout_url({}).to_s }
+      it { should eql 'http://example.com/cas/logout' }
+    end
+
+    context 'with params' do
+      subject { server.logout_url({ gateway: 'true', service: 'http://example.com' }).to_s }
+      it { should eql 'http://example.com/cas/logout?gateway=true&service=http%3A%2F%2Fexample.com' }
+    end
   end
 
   describe :validate_service do

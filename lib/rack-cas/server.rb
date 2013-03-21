@@ -12,8 +12,11 @@ module RackCAS
       @url.dup.append_path('login').add_params(service: service_url)
     end
 
-    def logout_url
-      @url.dup.append_path('logout')
+    def logout_url(params = {})
+      @url.dup.tap do |url|
+        url.append_path('logout')
+        url.add_params(params) unless params.empty?
+      end
     end
 
     def validate_service(service_url, ticket)
