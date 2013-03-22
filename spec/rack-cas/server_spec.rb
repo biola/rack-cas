@@ -8,8 +8,15 @@ describe RackCAS::Server do
   let(:ticket) { 'ST-0123456789ABCDEFGHIJKLMNOPQRS' }
 
   describe :login_url do
-    subject { server.login_url(service_url) }
-    its(:to_s) { should eql 'http://example.com/cas/login?service=http%3A%2F%2Fexample.org%2Fwhatever' }
+    context 'without params' do
+      subject { server.login_url(service_url) }
+      its(:to_s) { should eql 'http://example.com/cas/login?service=http%3A%2F%2Fexample.org%2Fwhatever' }
+    end
+
+    context 'with params' do
+      subject { server.login_url(service_url, gateway: 'true') }
+      its(:to_s) { should eql 'http://example.com/cas/login?gateway=true&service=http%3A%2F%2Fexample.org%2Fwhatever' }
+    end
   end
 
   describe :logout_url do
