@@ -21,8 +21,8 @@ RSpec.configure do |config|
   end
 end
 
-def cas_test_app
-  Rack::CAS.new(CasTestApp.new, server_url: 'http://example.com/cas')
+def cas_test_app(options = {})
+  Rack::CAS.new(CasTestApp.new, {server_url: 'http://example.com/cas'}.merge(options))
 end
 
 def fake_cas_test_app

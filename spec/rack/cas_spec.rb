@@ -1,12 +1,13 @@
 require 'spec_helper'
 
 describe Rack::CAS do
-  def app
-    cas_test_app
-  end
-  
   let(:server_url) { 'http://example.com/cas' }
+  let(:app_options) { {} }
   let(:ticket) { 'ST-0123456789ABCDEFGHIJKLMNOPQRS' }
+
+  def app
+    cas_test_app app_options
+  end
 
   describe 'public request' do
     subject { get '/public' }
@@ -29,6 +30,16 @@ describe Rack::CAS do
       its(:status) { should eql 302 }
       its(:location) { should eql 'http://example.org/private' }
     end
+
+    context 'with extra_attributes_filter set' do
+      let(:app_options) { { extra_attributes_filter: [:cn, :mail] } }
+
+      before { get '/private?ticket=ST-0123456789ABCDEFGHIJKLMNOPQRS' }
+      subject { last_request.session['cas']['extra_attributes'] }
+      it { should have_key 'cn' }
+      it { should have_key 'mail' }
+      it { should_not have_key 'title' }
+    end
   end
 
   describe 'logout request' do
@@ -46,12 +57,12 @@ describe Rack::CAS do
   end
 
   describe 'single sign out request' do
-    def app
+    let(:app_options) {
       session_store = double('session_store').stub(:destroy_session_by_cas_ticket => 1)
       session_store.should_receive(:destroy_session_by_cas_ticket).with(ticket)
 
-      Rack::CAS.new(CasTestApp.new, server_url: server_url, session_store: session_store)
-    end
+      { session_store: session_store }
+    }
 
     subject { post "/?logoutRequest=#{URI.encode(fixture('single_sign_out_request.xml'))}" }
     its(:status) { should eql 200 }
@@ -59,9 +70,7 @@ describe Rack::CAS do
   end
 
   describe 'excluded request' do
-    def app
-      Rack::CAS.new(CasTestApp.new, server_url: server_url, exclude_path: '/private')
-    end
+    let(:app_options) { { exclude_path: '/private' } }
 
     subject { get '/private' }
     its(:status) { should eql 401 }
