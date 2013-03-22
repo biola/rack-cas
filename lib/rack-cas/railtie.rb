@@ -11,5 +11,9 @@ module RackCAS
         app.middleware.use Rack::CAS, config.rack_cas
       end
     end
+
+    rake_tasks do
+      load File.expand_path('../../tasks/session_prune.rake', __FILE__)
+    end
   end
 end

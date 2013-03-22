@@ -16,6 +16,11 @@ module RackCAS
       affected == 1
     end
 
+    def self.prune(after = nil)
+      after ||= Time.now - 2592000 # 30 days ago
+      Session.where(:updated_at.lte => after).delete
+    end
+
     private
 
     def get_session(env, sid)

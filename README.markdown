@@ -13,6 +13,8 @@ Current gem dependencies are [rack](http://rubygems.org/gems/rack), [addressable
 Extra attributes are a mess though. So let me know if your brand of CAS server isn't supported.
 * __Single sign out__  
 One of the included session stores must be used.
+* __Rake tasks to prune stale sessions__  
+`rack_cas:sessions:prune:active_record` and `rack_cas:sessions:prune:mongoid`
 
 Requirements
 ============
