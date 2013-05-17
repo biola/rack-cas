@@ -1,9 +1,12 @@
 module RackCAS
   class ServiceValidationResponse
     class AuthenticationFailure < StandardError; end
+    class RequestInvalidError < AuthenticationFailure; end
+    class TicketInvalidError < AuthenticationFailure; end
+    class ServiceInvalidError < AuthenticationFailure; end
 
     REQUEST_HEADERS = { 'Accept' => '*/*' }
-    
+
     def initialize(url)
       @url = URL.parse(url)
     end
@@ -12,7 +15,16 @@ module RackCAS
       if success?
         xml.xpath('/cas:serviceResponse/cas:authenticationSuccess/cas:user').text
       else
-        raise AuthenticationFailure, failure_message
+        case failure_code
+        when 'INVALID_REQUEST'
+          raise RequestInvalidError, failure_message
+        when 'INVALID_TICKET'
+          raise TicketInvalidError, failure_message
+        when 'INVALID_SERVICE'
+          raise ServiceInvalidError, failure_message
+        else
+          raise AuthenticationFailure, failure_message
+        end
       end
     end
 
@@ -50,16 +62,26 @@ module RackCAS
       @success ||= !!xml.at('/cas:serviceResponse/cas:authenticationSuccess')
     end
 
+    def authentication_failure
+      @authentication_failure ||= xml.at('/cas:serviceResponse/cas:authenticationFailure')
+    end
+
     def failure_message
-      if node = xml.at('/cas:serviceResponse/cas:authenticationFailure')
-        node.text.strip
+      if authentication_failure
+        authentication_failure.text.strip
+      end
+    end
+
+    def failure_code
+      if authentication_failure
+        authentication_failure['code']
       end
     end
 
     def response
       require 'net/http'
       return @response unless @response.nil?
-      
+
       http = Net::HTTP.new(@url.host, @url.inferred_port)
       http.use_ssl = true if @url.scheme == 'https'
 
@@ -72,7 +94,7 @@ module RackCAS
 
     def xml
       return @xml unless @xml.nil?
-      
+
       @xml = Nokogiri::XML(response.body)
     end
   end

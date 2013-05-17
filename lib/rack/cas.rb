@@ -23,13 +23,19 @@ class Rack::CAS
     cas_request = CASRequest.new(request)
 
     if cas_request.path_matches? @config[:exclude_paths] || @config[:exclude_path]
-      return @app.call(env) 
+      return @app.call(env)
     end
 
     if cas_request.ticket_validation?
       log env, 'rack-cas: Intercepting ticket validation request.'
 
-      user, extra_attrs = get_user(request.url, cas_request.ticket)
+      begin
+        user, extra_attrs = get_user(request.url, cas_request.ticket)
+      rescue RackCAS::ServiceValidationResponse::TicketInvalidError
+        log env, 'rack-cas: Invalid ticket. Redirecting to CAS login.'
+
+        return redirect_to server.login_url(cas_request.service_url).to_s
+      end
 
       store_session request, user, cas_request.ticket, extra_attrs
       return redirect_to cas_request.service_url
