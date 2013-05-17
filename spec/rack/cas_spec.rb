@@ -40,6 +40,12 @@ describe Rack::CAS do
       it { should have_key 'mail' }
       it { should_not have_key 'title' }
     end
+
+    context 'with an invalid ticket' do
+      before { RackCAS::ServiceValidationResponse.any_instance.stub(:user) { raise RackCAS::ServiceValidationResponse::TicketInvalidError } }
+      its(:status) { should eql 302 }
+      its(:location) { should eql 'http://example.com/cas/login?service=http%3A%2F%2Fexample.org%2Fprivate%3Fsearch%3Dblah' }
+    end
   end
 
   describe 'logout request' do
