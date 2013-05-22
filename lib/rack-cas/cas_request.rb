@@ -26,9 +26,11 @@ class CASRequest
   end
 
   def ticket_validation?
-    # The CAS protocol specifies 32 characters as the minimum length of a
-    # service ticket (including ST-) http://www.jasig.org/cas/protocol
-    !!(@request.get? && ticket_param && ticket_param.to_s =~ /\AST\-[^\s]{29}/)
+    # The CAS protocol specifies that services must support tickets of
+    # *up to* 32 characters in length (including ST-), and recommendes
+    # that services accept tickets up to 256 characters long.
+    # http://www.jasig.org/cas/protocol
+    !!(@request.get? && ticket_param && ticket_param.to_s =~ /\AST\-[^\s]{,253}\Z/)
   end
 
   def path_matches?(strings_or_regexps)
