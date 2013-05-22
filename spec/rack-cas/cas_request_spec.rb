@@ -30,7 +30,7 @@ describe CASRequest do
   end
 
   context 'short ticket' do
-    before { get '/private/something?ticket=ST-0123456789' }
+    before { get '/private/something?ticket=ST-' }
     its(:ticket_validation?) { should be_false }
     its(:ticket) { should be_nil }
   end
