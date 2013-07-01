@@ -7,8 +7,6 @@ module RackCAS
       field :_id, type: String
       field :data, type: Moped::BSON::Binary, :default => Moped::BSON::Binary.new(:generic,Marshal.dump({}))
       field :cas_ticket, type: String
-
-      attr_accessible :_id, :data, :cas_ticket
     end
 
     def self.destroy_session_by_cas_ticket(cas_ticket)

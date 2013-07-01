@@ -1,7 +1,6 @@
 module RackCAS
   module ActiveRecordStore
     class Session < ActiveRecord::Base
-      attr_accessible :id, :data, :cas_ticket
     end
 
     def self.destroy_session_by_cas_ticket(cas_ticket)
