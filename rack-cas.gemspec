@@ -13,6 +13,7 @@ spec = Gem::Specification.new do |s|
   s.author = 'Adam Crownoble'
   s.email = 'adam.crownoble@biola.edu'
   s.homepage = 'https://github.com/biola/rack-cas'
+  s.license = 'MIT'
   s.add_dependency('rack')
   s.add_dependency('addressable', '>= 2.3')
   s.add_dependency('nokogiri')
