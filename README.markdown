@@ -5,15 +5,15 @@ Rack-CAS is simple [Rack](http://rack.github.com/) middleware to perform [CAS](h
 Features
 ========
 * __Rack based__
-* __Framework independent__  
+* __Framework independent__
 Works with, but doesn't depend on Rails, Sinatra, etc.
-* __Minimal dependencies__  
+* __Minimal dependencies__
 Current gem dependencies are [rack](http://rubygems.org/gems/rack), [addressable](http://rubygems.org/gems/addressable) and [nokogiri](http://rubygems.org/gems/nokogiri).
-* __Supports CAS extra attributes__  
+* __Supports CAS extra attributes__
 Extra attributes are a mess though. So let me know if your brand of CAS server isn't supported.
-* __Single sign out__  
+* __Single sign out__
 One of the included session stores must be used.
-* __Rake tasks to prune stale sessions__  
+* __Rake tasks to prune stale sessions__
 `rack_cas:sessions:prune:active_record` and `rack_cas:sessions:prune:mongoid`
 
 Requirements

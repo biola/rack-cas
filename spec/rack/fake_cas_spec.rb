@@ -4,7 +4,7 @@ describe Rack::FakeCAS do
   def app
     fake_cas_test_app
   end
-  
+
   describe 'public request' do
     subject { get '/public' }
     its(:status) { should eql 200 }

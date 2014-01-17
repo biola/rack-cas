@@ -14,7 +14,7 @@ class Rack::FakeCAS
     if cas_request.path_matches? @config[:exclude_paths] || @config[:exclude_path]
       return @app.call(env)
     end
-    
+
     case @request.path_info
     when '/login'
       @request.session['cas'] = {}
