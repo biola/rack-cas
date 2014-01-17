@@ -5,15 +5,15 @@ Rack-CAS is simple [Rack](http://rack.github.com/) middleware to perform [CAS](h
 Features
 ========
 * __Rack based__
-* __Framework independent__  
+* __Framework independent__
 Works with, but doesn't depend on Rails, Sinatra, etc.
-* __Minimal dependencies__  
+* __Minimal dependencies__
 Current gem dependencies are [rack](http://rubygems.org/gems/rack), [addressable](http://rubygems.org/gems/addressable) and [nokogiri](http://rubygems.org/gems/nokogiri).
-* __Supports CAS extra attributes__  
+* __Supports CAS extra attributes__
 Extra attributes are a mess though. So let me know if your brand of CAS server isn't supported.
-* __Single sign out__  
+* __Single sign out__
 One of the included session stores must be used.
-* __Rake tasks to prune stale sessions__  
+* __Rake tasks to prune stale sessions__
 `rack_cas:sessions:prune:active_record` and `rack_cas:sessions:prune:mongoid`
 
 Requirements
@@ -128,9 +128,18 @@ Integration testing using something like [Capybara](http://jnicklas.github.com/c
     require 'rack/fake_cas'
     use Rack::FakeCAS
 
+In addition you can pass a Hash to configure extra attributes for predefined
+usernames.
+
+    use Rack::FakeCAS, {}, {'john' => {'name' => 'John Doe'}}
+
 If you are using Rails, FakeCAS is automatically used in the test environment by default. If you would like to activate it in any other environment, add the following to the corresponding `config/environments/<env>.rb`:
 
     config.rack_cas.fake = true
+
+You can also configure extra attribute mappings through the Rails config:
+
+    config.rack_cas.fake_attributes = { 'john' => { 'name' => 'John Doe' } }
 
 Then you can simply do the following in your integration tests in order to log in.
 
