@@ -128,9 +128,18 @@ Integration testing using something like [Capybara](http://jnicklas.github.com/c
     require 'rack/fake_cas'
     use Rack::FakeCAS
 
+In addition you can pass a Hash to configure extra attributes for predefined
+usernames.
+
+    use Rack::FakeCAS, {}, {'john' => {'name' => 'John Doe'}}
+
 If you are using Rails, FakeCAS is automatically used in the test environment by default. If you would like to activate it in any other environment, add the following to the corresponding `config/environments/<env>.rb`:
 
     config.rack_cas.fake = true
+
+You can also configure extra attribute mappings through the Rails config:
+
+    config.rack_cas.fake_attributes = { 'john' => { 'name' => 'John Doe' } }
 
 Then you can simply do the following in your integration tests in order to log in.
 

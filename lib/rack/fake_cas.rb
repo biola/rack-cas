@@ -2,9 +2,10 @@ require 'rack'
 require 'rack-cas/cas_request'
 
 class Rack::FakeCAS
-  def initialize(app, config={})
+  def initialize(app, config={}, attributes_config={})
     @app = app
     @config = config || {}
+    @attributes_config = attributes_config || {}
   end
 
   def call(env)
@@ -17,9 +18,10 @@ class Rack::FakeCAS
 
     case @request.path_info
     when '/login'
+      username = @request.params['username']
       @request.session['cas'] = {}
-      @request.session['cas']['user'] = @request.params['username']
-      @request.session['cas']['extra_attributes'] = {}
+      @request.session['cas']['user'] = username
+      @request.session['cas']['extra_attributes'] = @attributes_config.fetch(username, {})
       redirect_to @request.params['service']
 
     when '/logout'
