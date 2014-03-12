@@ -30,18 +30,20 @@ module RackCAS
     def set_session(env, sid, session_data, options)
       cas_ticket = (session_data['cas']['ticket'] unless session_data['cas'].nil?)
 
-      session = if ActiveRecord.version >= Gem::Version.new('4.0.0')
+      session = if ActiveRecord.respond_to?(:version) && ActiveRecord.version >= Gem::Version.new('4.0.0')
         Session.where(session_id: sid).first_or_initialize
       else
         Session.find_or_initialize_by_session_id(sid)
       end
-      success = session.update_attributes(data: pack(session_data), cas_ticket: cas_ticket)
+      session.data = pack(session_data)
+      session.cas_ticket = cas_ticket
+      success = session.save
 
       success ? session.session_id : false
     end
 
     def destroy_session(env, sid, options)
-      session = Session.where(session_id: sid).delete_all
+      Session.where(session_id: sid).delete_all
 
       options[:drop] ? nil : generate_sid
     end
