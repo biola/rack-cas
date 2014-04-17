@@ -21,6 +21,6 @@ class CasSessionStoreMigrationGenerator < Rails::Generators::Base
   end
 
   def create_migration_file
-    migration_template 'migration.rb', 'db/migrate/create_rack_cas_sessions'
+    migration_template 'migration.rb', 'db/migrate/create_rack_cas_sessions.rb'
   end
 end
