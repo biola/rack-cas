@@ -79,6 +79,8 @@ Add the following to your `config.ru` file:
     require 'rack/cas'
     use Rack::CAS, server_url: 'https://login.example.com/cas'
 
+See the [example Sinatra app](https://gist.github.com/adamcrown/a7e757759469033584c4) to get started.
+
 ### Single Sign Out ###
 
 Single sign out support outside of Rails is currently untested. We'll be adding instructions here soon.
