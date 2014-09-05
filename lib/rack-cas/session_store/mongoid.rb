@@ -5,7 +5,13 @@ module RackCAS
       include Mongoid::Timestamps
 
       field :_id, type: String
-      field :data, type: Moped::BSON::Binary, :default => Moped::BSON::Binary.new(:generic,Marshal.dump({}))
+      if defined? Moped::BSON
+        # Mongoid < 4
+        field :data, type: Moped::BSON::Binary, default: Moped::BSON::Binary.new(:generic, Marshal.dump({}))
+      else
+        # Mongoid 4
+        field :data, type: BSON::Binary, default: BSON::Binary.new(Marshal.dump({}))
+      end
       field :cas_ticket, type: String
     end
 
@@ -44,17 +50,26 @@ module RackCAS
 
     def destroy_session(env, sid, options)
       session = Session.where(_id: sid).delete
-      
+
       options[:drop] ? nil : generate_sid
     end
 
     def pack(data)
-      Moped::BSON::Binary.new(:generic,Marshal.dump(data))
+      if defined? Moped::BSON
+        Moped::BSON::Binary.new(:generic, Marshal.dump(data))
+      else
+        BSON::Binary.new(Marshal.dump(data))
+      end
     end
 
     def unpack(packed)
       return nil unless packed
-      Marshal.load(StringIO.new(packed.to_s))
+
+      if defined? Moped::BSON
+        Marshal.load(StringIO.new(packed.to_s))
+      else
+        Marshal.load(packed.data)
+      end
     end
   end
 end
