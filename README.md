@@ -1,6 +1,6 @@
 Rack-CAS [![Build Status](https://travis-ci.org/biola/rack-cas.png?branch=master)](https://travis-ci.org/biola/rack-cas)
 ========
-Rack-CAS is simple [Rack](http://rack.github.com/) middleware to perform [CAS](http://jasig.org/cas) client authentication.
+Rack-CAS is simple [Rack](http://rack.github.com/) middleware to perform [CAS](http://en.wikipedia.org/wiki/Central_Authentication_Service) client authentication.
 
 Features
 ========
@@ -19,7 +19,7 @@ One of the included session stores must be used.
 Requirements
 ============
 * Ruby >= 1.9.2
-* A working [CAS server](http://rubycas.github.com)
+* A working [CAS server](http://casino.rbcas.com)
 * An app that [returns a `401 Unauthorized`](#integration) status when authentication is requried
 
 Installation
@@ -36,9 +36,9 @@ Once the necessary gems have been installed, in your `config/application.rb` add
 
 If the the server URL depends on your environment, you can define it in the according file: `config/environments/<env>.rb`
 
-### Single Sign Out ###
+### Single Logout ###
 
-If you wish to enable [single sign out](https://wiki.jasig.org/display/CASUM/Single+Sign+Out) you'll need to modify your configuration as below.
+If you wish to enable [single logout](http://jasig.github.io/cas/4.0.0/installation/Logout-Single-Signout.html) you'll need to modify your configuration as below.
 
 #### Active Record ####
 
@@ -110,7 +110,7 @@ Once authentication with the CAS server has completed, Rack-CAS will set the fol
     request.session['cas']['user'] #=> johndoe
     request.session['cas']['extra_attributes'] #=> { 'first_name' => 'John', 'last_name' => ... }
 
-__NOTE:__ `extra_attributes` will be an empty hash unless they've been [configured on your CAS server](https://github.com/rubycas/rubycas-server/wiki/Extra-user-attributes).
+__NOTE:__ `extra_attributes` will be an empty hash unless they've been [configured on your CAS server](http://casino.rbcas.com/docs/configuration/#ldap).
 
 Testing
 =======
