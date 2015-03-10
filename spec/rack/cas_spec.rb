@@ -64,7 +64,8 @@ describe Rack::CAS do
 
   describe 'single sign out request' do
     let(:app_options) {
-      session_store = double('session_store').stub(:destroy_session_by_cas_ticket => 1)
+      session_store = double('session_store')
+      session_store.stub(:destroy_session_by_cas_ticket).and_return 1
       session_store.should_receive(:destroy_session_by_cas_ticket).with(ticket)
 
       { session_store: session_store }
@@ -76,7 +77,7 @@ describe Rack::CAS do
   end
 
   describe 'excluded request' do
-    let(:app_options) { { exclude_path: '/private' } }
+    let(:app_options) { { exclude_path: '/private', session_store: nil } }
 
     subject { get '/private' }
     its(:status) { should eql 401 }
