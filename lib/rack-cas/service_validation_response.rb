@@ -83,7 +83,10 @@ module RackCAS
       return @response unless @response.nil?
 
       http = Net::HTTP.new(@url.host, @url.inferred_port)
-      http.use_ssl = true if @url.scheme == 'https'
+      if @url.scheme == 'https'
+        http.use_ssl = true
+        http.verify_mode = RackCAS.config.verify_ssl_cert? ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
+      end
 
       http.start do |conn|
         @response = conn.get(@url.request_uri, REQUEST_HEADERS)
