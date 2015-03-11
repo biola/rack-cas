@@ -1,6 +1,6 @@
 module RackCAS
   class Configuration
-    SETTINGS = [:server_url, :session_store, :exclude_path, :exclude_paths, :extra_attributes_filter]
+    SETTINGS = [:server_url, :session_store, :exclude_path, :exclude_paths, :extra_attributes_filter, :verify_ssl_cert]
 
     SETTINGS.each do |setting|
       attr_accessor setting
@@ -8,6 +8,10 @@ module RackCAS
       define_method "#{setting}?" do
         !(send(setting).nil? || send(setting) == [])
       end
+    end
+
+    def initialize
+      @verify_ssl_cert = true
     end
 
     def extra_attributes_filter
