@@ -19,6 +19,13 @@ describe Rack::FakeCAS do
     its(:body) { should match /password/ }
   end
 
+  describe 'login page request' do
+    subject { get '/fake_cas_login' }
+    its(:status) { should eql 200 }
+    its(:body) { should match /username/ }
+    its(:body) { should match /password/ }
+  end
+
   describe 'login request' do
     before { get '/login', username: 'janed0', service: 'http://example.org/private' }
 
