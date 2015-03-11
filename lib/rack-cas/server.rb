@@ -9,7 +9,10 @@ module RackCAS
 
     def login_url(service_url, params = {})
       service_url = URL.parse(service_url).to_s
-      @url.dup.append_path('login').add_params({service: service_url}.merge(params))
+      base_params = {service: service_url}
+      base_params[:renew] = true if RackCAS.config.renew?
+
+      @url.dup.append_path('login').add_params(base_params.merge(params))
     end
 
     def logout_url(params = {})
