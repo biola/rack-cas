@@ -17,6 +17,12 @@ describe RackCAS::Server do
       subject { server.login_url(service_url, gateway: 'true') }
       its(:to_s) { should eql 'http://example.com/cas/login?gateway=true&service=http%3A%2F%2Fexample.org%2Fwhatever' }
     end
+
+    context 'with renew = true' do
+      before { RackCAS.config.stub(renew: true) }
+      subject { server.login_url(service_url) }
+      its(:to_s) { should eql 'http://example.com/cas/login?renew=true&service=http%3A%2F%2Fexample.org%2Fwhatever' }
+    end
   end
 
   describe :logout_url do
