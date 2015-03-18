@@ -88,6 +88,15 @@ Single sign out support outside of Rails is currently untested. We'll be adding 
 Configuration
 =============
 
+Extra Attributes
+----------------
+
+You can whitelist which extra attributes to keep.
+In your `config/application.rb`:
+```ruby
+config.rack_cas.extra_attributes_filter = %w(some_attribute some_other_attribute)
+```
+
 Excluding Paths
 ---------------
 
