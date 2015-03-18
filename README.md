@@ -94,7 +94,7 @@ Extra Attributes
 You can whitelist which extra attributes to keep.
 In your `config/application.rb`:
 ```ruby
-config.rack_cas.extra_attributes_filter = %w(some_attribute some_other_attribute yet_a_third)
+config.rack_cas.extra_attributes_filter = %w(some_attribute some_other_attribute)
 ```
 
 Excluding Paths
