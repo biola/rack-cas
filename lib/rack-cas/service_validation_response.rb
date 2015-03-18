@@ -1,3 +1,6 @@
+require 'json'
+require 'yaml'
+
 module RackCAS
   class ServiceValidationResponse
     class AuthenticationFailure < StandardError; end
@@ -37,7 +40,7 @@ module RackCAS
       if attr_node = xml.at('/cas:serviceResponse/cas:authenticationSuccess/cas:attributes')
         attr_node.children.each do |node|
           if node.is_a? Nokogiri::XML::Element
-            attrs[node.name] = node.text
+            attrs[node.name] = parse_extra_attribute(node.text)
           end
         end
 
@@ -46,8 +49,7 @@ module RackCAS
         xml.at('/cas:serviceResponse/cas:authenticationSuccess').children.each do |node|
           if node.is_a? Nokogiri::XML::Element
             if !node.namespace || !node.namespace.prefix == 'cas'
-              # TODO: support JSON encoding
-              attrs[node.name] = YAML.load node.text.strip
+              attrs[node.name] = parse_extra_attribute(node.text)
             end
           end
         end
@@ -57,6 +59,26 @@ module RackCAS
     end
 
     protected
+
+    def _parse_json(string)
+      JSON.parse(string)
+    rescue
+      nil
+    end
+
+    def _parse_yaml(string)
+      YAML.load(string)
+    rescue
+      nil
+    end
+
+    def parse_extra_attribute(string)
+      parsed = _parse_json(string.strip) || _parse_yaml(string.strip) || string
+      # because YAML is a pretty loose format it will accept most strings
+      # but if our output is a string, then we don't really need fancy parsing
+      parsed = string if parsed.kind_of? String
+      parsed
+    end
 
     def success?
       @success ||= !!xml.at('/cas:serviceResponse/cas:authenticationSuccess')
