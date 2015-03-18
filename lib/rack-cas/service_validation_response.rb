@@ -1,4 +1,3 @@
-require 'json'
 require 'yaml'
 
 module RackCAS
@@ -60,12 +59,6 @@ module RackCAS
 
     protected
 
-    def _parse_json(string)
-      JSON.parse(string)
-    rescue
-      nil
-    end
-
     def _parse_yaml(string)
       YAML.load(string)
     rescue
@@ -73,9 +66,10 @@ module RackCAS
     end
 
     def parse_extra_attribute(string)
-      parsed = _parse_json(string.strip) || _parse_yaml(string.strip) || string
-      # because YAML is a pretty loose format it will accept most strings
-      # but if our output is a string, then we don't really need fancy parsing
+      parsed = _parse_yaml(string.strip) || string
+      # Because YAML is a loose format it will accept most strings.
+      # Most of the time, we don't want to muck with the string.
+      # We probably do if the YAML parsing outputs a non-string.
       parsed = string if parsed.kind_of? String
       parsed
     end
