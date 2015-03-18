@@ -71,7 +71,9 @@ class Rack::CAS
   end
 
   def store_session(request, user, ticket, extra_attrs = {})
-    extra_attrs.select! { |key, val| RackCAS.config.extra_attributes_filter.map(&:to_s).include? key.to_s }
+    if RackCAS.config.extra_attributes_filter?
+      extra_attrs.select! { |key, val| RackCAS.config.extra_attributes_filter.map(&:to_s).include? key.to_s }
+    end
 
     request.session['cas'] = { 'user' => user, 'ticket' => ticket, 'extra_attributes' => extra_attrs }
   end
