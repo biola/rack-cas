@@ -110,6 +110,25 @@ The same options can be passed to `FakeCAS`.
 ```ruby
 use Rack::FakeCAS, exclude_path: '/api'
 ```
+
+SSL Cert Verification
+---------------------
+
+If you're working in development or staging your CAS server may not have a legit SSL cert. You can turn off SSL Cert verification by adding the following to `config/application.rb`.
+
+```ruby
+config.rack_cas.verify_ssl_cert = false
+```
+
+CAS Login Renew Flag
+--------------
+
+The CAS standard allows for a `renew=true` parameter to be passed to the CAS server which will force the user to re-login every time CAS authentication is performed, for added security. To enable this for your application, add the following to `config/application.rb`.
+
+```ruby
+config.rack_cas.renew = true
+```
+
 Integration
 ===========
 Your app should __return a [401 status](http://httpstatus.es/401)__ whenever a request is made that requires authentication. Rack-CAS will catch these responses and attempt to authenticate via your CAS server.
