@@ -50,7 +50,7 @@ config.rack_cas.session_store = RackCAS::ActiveRecordStore
 Edit your `config/initializers/session_store.rb` file with the following:
 ```ruby
 require 'rack-cas/session_store/rails/active_record'
-YourApp::Application.config.session_store :rack_cas_active_record_store
+YourApp::Application.config.session_store ActionDispatch::Session::RackCasActiveRecordStore
 ```
 Run:
 ```ruby
@@ -67,7 +67,7 @@ config.rack_cas.session_store = RackCAS::MongoidStore
 Edit your `config/initializers/session_store.rb` file with the following:
 ```ruby
 require 'rack-cas/session_store/rails/mongoid'
-YourApp::Application.config.session_store :rack_cas_mongoid_store
+YourApp::Application.config.session_store ActionDispatch::Session::RackCasMongoidStore
 ```
 Sinatra and Other Rack-Compatible Frameworks
 --------------------------------------------
