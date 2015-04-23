@@ -38,7 +38,7 @@ If the the server URL depends on your environment, you can define it in the acco
 
 ### Single Logout ###
 
-If you wish to enable [single logout](http://jasig.github.io/cas/4.0.0/installation/Logout-Single-Signout.html) you'll need to modify your configuration as below.
+If you wish to enable [single logout](http://jasig.github.io/cas/4.0.x/installation/Logout-Single-Signout.html) you'll need to modify your configuration as below.
 
 #### Active Record ####
 
