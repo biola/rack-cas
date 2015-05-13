@@ -25,7 +25,7 @@ class Rack::CAS
 
       begin
         user, extra_attrs = get_user(request.url, cas_request.ticket)
-      rescue RackCAS::ServiceValidationResponse::TicketInvalidError
+      rescue RackCAS::ServiceValidationResponse::TicketInvalidError, RackCAS::SAMLValidationResponse::TicketInvalidError
         log env, 'rack-cas: Invalid ticket. Redirecting to CAS login.'
 
         return redirect_to server.login_url(cas_request.service_url).to_s
