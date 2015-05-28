@@ -1,9 +1,6 @@
 module RackCAS
   class SAMLValidationResponse
     class AuthenticationFailure < StandardError; end
-    class RequestInvalidError < AuthenticationFailure; end
-    class TicketInvalidError < AuthenticationFailure; end
-    class ServiceInvalidError < AuthenticationFailure; end
 
     REQUEST_HEADERS = {
       'Accept' => '*/*',
@@ -19,16 +16,7 @@ module RackCAS
       if success?
         xml.at('//Response/Assertion/AuthenticationStatement/Subject/NameIdentifier').text
       else
-        case failure_code
-        when 'INVALID_REQUEST'
-          raise RequestInvalidError, failure_message
-        when 'INVALID_TICKET'
-          raise TicketInvalidError, failure_message
-        when 'INVALID_SERVICE'
-          raise ServiceInvalidError, failure_message
-        else
-          raise AuthenticationFailure, failure_message
-        end
+        raise AuthenticationFailure, failure_message
       end
     end
 
@@ -65,12 +53,6 @@ module RackCAS
     def failure_message
       if authentication_failure
         xml.at('//Response/Status/StatusMessage').text.strip
-      end
-    end
-
-    def failure_code
-      if authentication_failure
-        xml.at('//Response/Status/StatusCode/@Value').text
       end
     end
 
