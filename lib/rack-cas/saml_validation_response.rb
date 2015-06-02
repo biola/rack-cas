@@ -1,6 +1,7 @@
 module RackCAS
   class SAMLValidationResponse
     class AuthenticationFailure < StandardError; end
+    class TicketInvalidError < AuthenticationFailure; end
 
     REQUEST_HEADERS = {
       'Accept' => '*/*',
@@ -93,9 +94,13 @@ module RackCAS
 
       return @ip_address unless @ip_address.nil?
 
-      @ip_address = Socket.ip_address_list.detect{ |intf|
-          intf.ipv4? and !intf.ipv4_loopback? and !intf.ipv4_multicast? and !intf.ipv4_private?
-        }.ip_address
+      begin
+        @ip_address = Socket.ip_address_list.detect{ |intf|
+            intf.ipv4? and !intf.ipv4_loopback? and !intf.ipv4_multicast? and !intf.ipv4_private?
+          }.ip_address
+      rescue
+        @ip_address = '127.0.0.1'
+      end
     end
   end
 end
