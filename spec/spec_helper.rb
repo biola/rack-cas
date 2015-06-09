@@ -20,6 +20,11 @@ RSpec.configure do |config|
       headers: {'Content-Type' => 'text/xml'},
       body: fixture('rubycas_service_response.xml')
     )
+
+    stub_request(:post, /samlValidate/).to_return(
+      headers: {'Content-Type' => 'text/xml'},
+      body: fixture('saml_validation_response.xml')
+    )
   end
 end
 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+  <SOAP-ENV:Body>
+    <saml1p:Response xmlns:saml1p="urn:oasis:names:tc:SAML:1.0:protocol" IssueInstant="2015-05-28T12:29:16.050Z" MajorVersion="1" MinorVersion="1" Recipient="https://example.org/" ResponseID="_0179b384038958ff14e7b00a037445a5">
+      <saml1p:Status>
+        <saml1p:StatusCode Value="saml1p:Success"/>
+      </saml1p:Status>
+      <saml1:Assertion xmlns:saml1="urn:oasis:names:tc:SAML:1.0:assertion" AssertionID="_09f7176170c5d360f221e1d6fe37cfa3" IssueInstant="2015-05-28T12:29:16.050Z" Issuer="localhost" MajorVersion="1" MinorVersion="1">
+        <saml1:Conditions NotBefore="2015-05-28T12:29:16.050Z" NotOnOrAfter="2015-05-28T12:29:46.050Z">
+          <saml1:AudienceRestrictionCondition>
+            <saml1:Audience>https://example.org/</saml1:Audience>
+          </saml1:AudienceRestrictionCondition>
+        </saml1:Conditions>
+        <saml1:AuthenticationStatement AuthenticationInstant="2015-05-28T12:29:16.014Z" AuthenticationMethod="urn:oasis:names:tc:SAML:1.0:am:unspecified">
+          <saml1:Subject>
+            <saml1:NameIdentifier>johnd0</saml1:NameIdentifier>
+            <saml1:SubjectConfirmation>
+              <saml1:ConfirmationMethod>urn:oasis:names:tc:SAML:1.0:cm:artifact</saml1:ConfirmationMethod>
+            </saml1:SubjectConfirmation>
+          </saml1:Subject>
+        </saml1:AuthenticationStatement>
+        <saml1:AttributeStatement>
+          <saml1:Subject>
+            <saml1:NameIdentifier>johnd0</saml1:NameIdentifier>
+            <saml1:SubjectConfirmation>
+              <saml1:ConfirmationMethod>urn:oasis:names:tc:SAML:1.0:cm:artifact</saml1:ConfirmationMethod>
+            </saml1:SubjectConfirmation>
+          </saml1:Subject>
+          <saml1:Attribute AttributeName="eduPersonNickname" AttributeNamespace="http://www.ja-sig.org/products/cas/">
+            <saml1:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">John</saml1:AttributeValue>
+          </saml1:Attribute>
+        </saml1:AttributeStatement>
+      </saml1:Assertion>
+    </saml1p:Response>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

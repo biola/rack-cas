@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+<SOAP-ENV:Body>
+    <saml1p:Response xmlns:saml1p="urn:oasis:names:tc:SAML:1.0:protocol" IssueInstant="2015-05-28T13:06:30.450Z" MajorVersion="1" MinorVersion="1" Recipient="https://example.org/" ResponseID="_79c15e5e3270e26c854eb8e0d9d38d7e">
+    <saml1p:Status>
+        <saml1p:StatusCode Value="saml1p:RequestDenied"/>
+        <saml1p:StatusMessage>ticket 'ST-718673-vjzOrfL70HlOb5TviNTT-odo-665.example.org' not recognized</saml1p:StatusMessage>
+    </saml1p:Status>
+</saml1p:Response>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
