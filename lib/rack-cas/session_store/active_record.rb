@@ -24,7 +24,7 @@ module RackCAS
         data = unpack(session['data'])
       end
 
-      [sid, data]
+      [sid, data || {}]
     end
 
     def set_session(env, sid, session_data, options)
