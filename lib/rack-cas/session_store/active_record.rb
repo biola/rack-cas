@@ -27,7 +27,7 @@ module RackCAS
       [sid, data || {}]
     end
 
-    def set_session(env, sid, session_data, options)
+    def set_session(env, sid, session_data, options={})
       cas_ticket = (session_data['cas']['ticket'] unless session_data['cas'].nil?)
 
       session = if ActiveRecord.respond_to?(:version) && ActiveRecord.version >= Gem::Version.new('4.0.0')
