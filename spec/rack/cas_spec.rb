@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Rack::CAS do
   let(:server_url) { 'http://example.com/cas' }
-  let(:app_options) { {} }
+  let(:app_options) { {'fake' => false} }
   let(:ticket) { 'ST-0123456789ABCDEFGHIJKLMNOPQRS' }
 
   def app
