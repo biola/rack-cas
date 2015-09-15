@@ -6,7 +6,7 @@ module RackCAS
       attr_accessor setting
 
       define_method "#{setting}?" do
-        !(send(setting).nil? || send(setting) == [])
+        !(send(setting).nil? || send(setting) == [] || send(setting) == false)
       end
     end
 
