@@ -14,5 +14,6 @@
       <cas:eduPersonAffiliation>employee</cas:eduPersonAffiliation>
       <cas:memberOf>CN=Testing,OU=Departments,DC=example,DC=com</cas:memberOf>
     </cas:attributes>
+    <cas:proxyGrantingTicket>PGTIOU-1234567890</cas:proxyGrantingTicket>
   </cas:authenticationSuccess>
 </cas:serviceResponse>

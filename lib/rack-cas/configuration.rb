@@ -1,6 +1,6 @@
 module RackCAS
   class Configuration
-    SETTINGS = [:server_url, :session_store, :exclude_path, :exclude_paths, :extra_attributes_filter, :verify_ssl_cert, :renew, :use_saml_validation]
+    SETTINGS = [:server_url, :session_store, :exclude_path, :exclude_paths, :extra_attributes_filter, :verify_ssl_cert, :renew, :use_saml_validation, :pgt_callback_url]
 
     SETTINGS.each do |setting|
       attr_accessor setting

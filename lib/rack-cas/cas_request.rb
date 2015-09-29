@@ -1,3 +1,4 @@
+require 'addressable/uri'
 require 'nokogiri'
 
 class CASRequest
@@ -27,10 +28,15 @@ class CASRequest
 
   def ticket_validation?
     # The CAS protocol specifies that services must support tickets of
-    # *up to* 32 characters in length (including ST-), and recommendes
+    # *up to* 32 characters in length (including ST-), and recommends
     # that services accept tickets up to 256 characters long.
-    # http://www.jasig.org/cas/protocol
-    !!(@request.get? && ticket_param && ticket_param.to_s =~ /\AST\-[^\s]{1,253}\Z/)
+    #
+    # It also specifies that although the service ticket MUST start with "ST-",
+    # the proxy ticket SHOULD start with "PT-".  The "ST-" validation has
+    # been moved to the validate_service_url method in server.rb.
+    #
+    # http://jasig.github.io/cas/development/protocol/CAS-Protocol-Specification.html
+    !!(@request.get? && ticket_param && ticket_param.to_s =~ /\A[^\s]{1,256}\Z/)
   end
 
   def path_matches?(strings_or_regexps)
@@ -43,10 +49,33 @@ class CASRequest
     end
   end
 
+  def pgt_callback?
+    !!(@request.get? && RackCAS.config.pgt_callback_url? && \
+        Addressable::URI.parse(RackCAS.config.pgt_callback_url).path == Addressable::URI.parse(@request.url).path && \
+        pgt_iou_param && pgt_iou_param.to_s =~ /\A[^\s]{1,256}\Z/ && \
+        pgt_param && pgt_param.to_s =~ /\A[^\s]{1,256}\Z/)
+  end
+
+  def pgt
+    pgt_param if pgt_callback?
+  end
+
+  def pgt_iou
+    pgt_iou_param if pgt_callback?
+  end
+
   private
 
   def ticket_param
     @request.params['ticket']
+  end
+
+  def pgt_iou_param
+    @request.params['pgtIou']
+  end
+
+  def pgt_param
+    @request.params['pgtId']
   end
 
   def sso_ticket

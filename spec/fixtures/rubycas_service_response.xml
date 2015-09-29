@@ -58,5 +58,6 @@
 - CN=Employees,OU=Security Groups,DC=example,DC=com
 ]]>
     </memberOf>
+    <cas:proxyGrantingTicket>PGTIOU-1234567890</cas:proxyGrantingTicket>
   </cas:authenticationSuccess>
 </cas:serviceResponse>

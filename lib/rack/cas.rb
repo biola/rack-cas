@@ -24,15 +24,21 @@ class Rack::CAS
       log env, 'rack-cas: Intercepting ticket validation request.'
 
       begin
-        user, extra_attrs = get_user(request.url, cas_request.ticket)
+        user, extra_attrs, pgt_iou = get_user(request.url, cas_request.ticket)
       rescue RackCAS::ServiceValidationResponse::TicketInvalidError, RackCAS::SAMLValidationResponse::TicketInvalidError
         log env, 'rack-cas: Invalid ticket. Redirecting to CAS login.'
 
         return redirect_to server.login_url(cas_request.service_url).to_s
       end
 
-      store_session request, user, cas_request.ticket, extra_attrs
+      store_session request, user, cas_request.ticket, extra_attrs, pgt_iou
       return redirect_to cas_request.service_url
+    end
+
+    if cas_request.pgt_callback?
+      log env, 'rack-cas: Intercepting proxy granting ticket callback request.'
+      RackCAS.config.session_store.create_proxy_granting_ticket(cas_request.pgt_iou, cas_request.pgt)
+      return [200, {'Content-Type' => 'text/plain'}, ['CAS proxy granting ticket created successfully.']]
     end
 
     if cas_request.logout?
@@ -67,15 +73,21 @@ class Rack::CAS
   end
 
   def get_user(service_url, ticket)
-    server.validate_service(service_url, ticket)
+    server.validate_service(service_url, ticket, RackCAS.config.pgt_callback_url)
   end
 
-  def store_session(request, user, ticket, extra_attrs = {})
+  def store_session(request, user, ticket, extra_attrs = {}, pgt_iou = nil)
     if RackCAS.config.extra_attributes_filter?
       extra_attrs.select! { |key, val| RackCAS.config.extra_attributes_filter.map(&:to_s).include? key.to_s }
     end
 
     request.session['cas'] = { 'user' => user, 'ticket' => ticket, 'extra_attributes' => extra_attrs }
+
+    if pgt_iou
+      pgt = RackCAS.config.session_store.proxy_granting_ticket_for(pgt_iou)
+      request.session['cas']['pgt'] = pgt if pgt
+    end
+
   end
 
   def redirect_to(url, status=302)

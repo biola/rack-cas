@@ -42,11 +42,19 @@ describe RackCAS::Server do
     end
   end
 
-  describe :validate_service do
+  describe :validate_service_without_pgt_url do
     subject { server.validate_service(service_url, ticket) }
-    its(:length) { should eql 2 }
+    its(:length) { should eql 3 }
     its(:first) { should eql 'johnd0' }
-    its(:last) { should be_kind_of Hash }
+    its(:last) { should be nil }
+  end
+
+  describe :validate_service_with_pgt_url do
+
+    subject { server.validate_service(service_url, ticket, 'http://example.com/callback') }
+    its(:length) { should eql 3 }
+    its(:first) { should eql 'johnd0' }
+    its(:last) { should_not be 'PGTIOU-1234567890' }
   end
 
   describe :validate_service_url do    
