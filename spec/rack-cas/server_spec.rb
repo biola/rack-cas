@@ -54,7 +54,7 @@ describe RackCAS::Server do
     subject { server.validate_service(service_url, ticket, 'http://example.com/callback') }
     its(:length) { should eql 3 }
     its(:first) { should eql 'johnd0' }
-    its(:last) { should_not be 'PGTIOU-1234567890' }
+    its(:last) { should eql 'PGTIOU-1234567890' }
   end
 
   describe :validate_service_url do    
