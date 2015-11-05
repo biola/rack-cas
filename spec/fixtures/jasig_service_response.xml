@@ -11,7 +11,9 @@
       <cas:mail>john.doe@example.com</cas:mail>
       <cas:eduPersonPrincipalname>john.doe</cas:eduPersonPrincipalname>
       <cas:department>Imaginary Department</cas:department>
+      <cas:eduPersonAffiliation>alumnus</cas:eduPersonAffiliation>
       <cas:eduPersonAffiliation>employee</cas:eduPersonAffiliation>
+      <cas:memberOf>CN=Support,OU=Departments,DC=example,DC=com</cas:memberOf>
       <cas:memberOf>CN=Testing,OU=Departments,DC=example,DC=com</cas:memberOf>
     </cas:attributes>
   </cas:authenticationSuccess>

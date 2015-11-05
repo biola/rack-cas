@@ -27,6 +27,7 @@ describe RackCAS::ServiceValidationResponse do
     describe :extra_attributes do
       subject { response.extra_attributes }
       it { should be_kind_of Hash }
+      its(['eduPersonAffiliation']) { should eql ['alumnus', 'employee'] }
       its(['eduPersonNickname']) { should eql 'John' }
     end
   end

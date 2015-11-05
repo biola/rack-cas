@@ -37,7 +37,12 @@ module RackCAS
       if attr_node = xml.at('/cas:serviceResponse/cas:authenticationSuccess/cas:attributes')
         attr_node.children.each do |node|
           if node.is_a? Nokogiri::XML::Element
-            attrs[node.name] = node.text
+            if attrs.has_key?(node.name)
+              attrs[node.name] = [attrs[node.name]] if attrs[node.name].is_a? String
+              attrs[node.name] << node.text
+            else
+              attrs[node.name] = node.text
+            end
           end
         end
 
