@@ -50,7 +50,7 @@ config.rack_cas.session_store = RackCAS::ActiveRecordStore
 Edit your `config/initializers/session_store.rb` file with the following:
 ```ruby
 require 'rack-cas/session_store/rails/active_record'
-YourApp::Application.config.session_store ActionDispatch::Session::RackCasActiveRecordStore
+Rails.application.config.session_store ActionDispatch::Session::RackCasActiveRecordStore
 ```
 Run:
 ```ruby
