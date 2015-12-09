@@ -54,8 +54,8 @@ module RackCAS
               # TODO: support JSON encoding
               attrs[node.name] = YAML.load node.text.strip
             else
-              attrs['cas'] = [] unless attrs['cas']
-              attrs['cas'] << { node.name => YAML.load(node.text.strip) }
+              attrs['cas'] = {} unless attrs['cas']
+              attrs['cas'][node.name] = YAML.load(node.text.strip)
             end
           end
         end
