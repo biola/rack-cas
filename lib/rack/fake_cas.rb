@@ -25,7 +25,7 @@ class Rack::FakeCAS
       redirect_to @request.params['service']
 
     when '/logout'
-      @request.session.clear
+      @request.session.send respond_to?(:destroy) ? :destroy : :clear
       redirect_to "#{@request.script_name}/"
 
     # built-in way to get to the login page without needing to return a 401 status

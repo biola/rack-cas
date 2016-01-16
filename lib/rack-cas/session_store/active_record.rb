@@ -20,7 +20,11 @@ module RackCAS
         sid = generate_sid
         data = nil
       else
-        session = Session.where(session_id: sid).first || {}
+        unless session = Session.where(session_id: sid).first
+          session = {}
+          # force generation of new sid since there is no associated session
+          sid = generate_sid
+        end
         data = unpack(session['data'])
       end
 
