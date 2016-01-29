@@ -1,6 +1,6 @@
 module RackCAS
   class Configuration
-    SETTINGS = [:fake, :server_url, :session_store, :exclude_path, :exclude_paths, :extra_attributes_filter, :verify_ssl_cert, :renew, :use_saml_validation]
+    SETTINGS = [:fake, :server_url, :session_store, :exclude_path, :exclude_paths, :extra_attributes_filter, :verify_ssl_cert, :renew, :use_saml_validation, :attributes_prefix]
 
     SETTINGS.each do |setting|
       attr_accessor setting
@@ -12,6 +12,7 @@ module RackCAS
 
     def initialize
       @verify_ssl_cert = true
+      @attributes_prefix = 'cas'
     end
 
     def extra_attributes_filter

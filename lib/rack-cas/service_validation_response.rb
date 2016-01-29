@@ -34,7 +34,7 @@ module RackCAS
       raise AuthenticationFailure, failure_message unless success?
 
       # Jasig style
-      if attr_node = xml.at('/cas:serviceResponse/cas:authenticationSuccess/cas:attributes')
+      if attr_node = xml.at("/cas:serviceResponse/cas:authenticationSuccess/#{RackCAS.config.attributes_prefix}:attributes")
         attr_node.children.each do |node|
           if node.is_a? Nokogiri::XML::Element
             if attrs.has_key?(node.name)
