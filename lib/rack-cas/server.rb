@@ -41,7 +41,8 @@ module RackCAS
 
     def validate_service_url(service_url, ticket)
       service_url = URL.parse(service_url).remove_param('ticket').to_s
-      @url.dup.append_path('serviceValidate').add_params(service: service_url, ticket: ticket)
+      # @url.dup.append_path('serviceValidate').add_params(service: service_url, ticket: ticket)
+      @url.dup.append_path('p3/serviceValidate').add_params(service: service_url, ticket: ticket)
     end
   end
 end
