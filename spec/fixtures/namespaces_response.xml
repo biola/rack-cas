@@ -1,0 +1,15 @@
+<strip:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+  <these:authenticationSuccess>
+    <namespaces:user>johnd0</namespaces:user>
+    <cn>
+      <![CDATA[---
+- johnd0
+]]>
+    </cn>
+    <title>
+      <![CDATA[---
+- Imaginary Person
+]]>
+    </title>
+  </these:authenticationSuccess>
+</strip:serviceResponse>

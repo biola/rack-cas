@@ -19,6 +19,18 @@ describe RackCAS::ServiceValidationResponse do
     end
   end
 
+  context 'namespaces response' do
+    let(:fixture_filename) { 'namespaces_response.xml' }
+
+    its(:user) { should eql 'johnd0' }
+
+    describe :extra_attributes do
+      subject { response.extra_attributes }
+      it { should be_kind_of Hash }
+      its(['title']) { should eql ['Imaginary Person'] }
+    end
+  end
+
   context 'jasig-style response' do
     let(:fixture_filename) { 'jasig_service_response.xml' }
 
