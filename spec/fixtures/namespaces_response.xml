@@ -1,15 +1,15 @@
-<strip:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
-  <these:authenticationSuccess>
-    <namespaces:user>johnd0</namespaces:user>
-    <cn>
+<vcu:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas' xmlns:vcu='http://login.vcu.edu/cas'>
+  <vcu:authenticationSuccess>
+    <vcu:user>johnd0</cas:user>
+    <vcu:cn>
       <![CDATA[---
 - johnd0
 ]]>
-    </cn>
-    <title>
+    </vcu:cn>
+    <vcu:title>
       <![CDATA[---
 - Imaginary Person
 ]]>
-    </title>
-  </these:authenticationSuccess>
-</strip:serviceResponse>
+    </vcu:title>
+  </vcu:authenticationSuccess>
+</vcu:serviceResponse>
