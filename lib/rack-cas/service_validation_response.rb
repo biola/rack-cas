@@ -13,7 +13,7 @@ module RackCAS
 
     def user
       if success?
-        xml.xpath('/cas:serviceResponse/cas:authenticationSuccess/cas:user').text
+        xml.at('//serviceResponse/authenticationSuccess/user').text
       else
         case failure_code
         when 'INVALID_REQUEST'
@@ -34,7 +34,7 @@ module RackCAS
       raise AuthenticationFailure, failure_message unless success?
 
       # Jasig style
-      if attr_node = xml.at('/cas:serviceResponse/cas:authenticationSuccess/cas:attributes')
+      if attr_node = xml.at('//serviceResponse/authenticationSuccess/attributes')
         attr_node.children.each do |node|
           if node.is_a? Nokogiri::XML::Element
             if attrs.has_key?(node.name)
@@ -48,7 +48,7 @@ module RackCAS
 
       # RubyCas-Server style
       else
-        xml.at('/cas:serviceResponse/cas:authenticationSuccess').children.each do |node|
+        xml.at('//serviceResponse/authenticationSuccess').children.each do |node|
           if node.is_a? Nokogiri::XML::Element
             if !node.namespace || !node.namespace.prefix == 'cas'
               # TODO: support JSON encoding
@@ -64,11 +64,11 @@ module RackCAS
     protected
 
     def success?
-      @success ||= !!xml.at('/cas:serviceResponse/cas:authenticationSuccess')
+      @success ||= !!xml.at('//serviceResponse/authenticationSuccess')
     end
 
     def authentication_failure
-      @authentication_failure ||= xml.at('/cas:serviceResponse/cas:authenticationFailure')
+      @authentication_failure ||= xml.at('//serviceResponse/authenticationFailure')
     end
 
     def failure_message
@@ -103,7 +103,7 @@ module RackCAS
     def xml
       return @xml unless @xml.nil?
 
-      @xml = Nokogiri::XML(response.body)
+      @xml = Nokogiri::XML(response.body).remove_namespaces!
     end
   end
 end
