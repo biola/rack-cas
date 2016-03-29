@@ -44,6 +44,21 @@ describe RackCAS::ServiceValidationResponse do
     end
   end
 
+  context 'nested jasig-style response' do
+    let(:fixture_filename) { 'jasig_nested_service_response.xml' }
+
+    its(:user) { should eql 'johnd0' }
+
+    describe :extra_attributes do
+      subject { response.extra_attributes }
+      it { should be_kind_of Hash }
+      its(['eduPersonAffiliation']) { should eql ['alumnus', 'employee'] }
+      its(['eduPersonNickname']) { should eql 'John' }
+      its(['nestedAttrs']) { should eql [{'attrType' => 'first'}, {'attrType' => 'second'}] }
+      its(['mixedAttrs']) { should eql ['string value', {'crazyAttr' => 'crazy nested string'}] }
+    end
+  end
+
   context 'failure response' do
     let(:fixture_filename) { 'failure_service_response.xml' }
 
