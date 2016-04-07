@@ -14,7 +14,7 @@ spec = Gem::Specification.new do |s|
   s.email = 'adam@codenoble.com'
   s.homepage = 'https://github.com/biola/rack-cas'
   s.license = 'MIT'
-  s.add_dependency 'rack', '~> 1.3'
+  s.add_dependency 'rack', '>= 1.3'
   s.add_dependency 'addressable', '~> 2.3'
   s.add_dependency 'nokogiri', '~> 1.5'
   s.add_development_dependency 'rspec', '~> 3.2'
