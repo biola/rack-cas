@@ -7,7 +7,7 @@ module RackCAS
       attr_accessor setting
 
       define_method "#{setting}?" do
-        !(send(setting).nil? || send(setting) == [])
+        ![nil, false, []].include? send(setting)
       end
     end
 
@@ -25,7 +25,7 @@ module RackCAS
           raise ArgumentError, "invalid setting: #{setting}"
         end
 
-        self.public_send "#{setting}=", value
+        public_send "#{setting}=", value
       end
 
       raise ArgumentError, 'server_url is required' unless server_url?
