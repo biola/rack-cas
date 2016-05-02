@@ -27,7 +27,8 @@ module RackCAS
 
     private
 
-    def get_session(env, sid)
+    # Rack 2.0 method
+    def find_session(env, sid)
       if sid.nil?
         sid = generate_sid
         data = nil
@@ -43,7 +44,8 @@ module RackCAS
       [sid, data]
     end
 
-    def set_session(env, sid, session_data, options)
+    # Rack 2.0 method
+    def write_session(env, sid, session_data, options)
       cas_ticket = (session_data['cas']['ticket'] unless session_data['cas'].nil?)
 
       session = Session.find_or_initialize_by(_id: sid)
@@ -52,10 +54,24 @@ module RackCAS
       success ? session.id : false
     end
 
-    def destroy_session(env, sid, options)
+    # Rack 2.0 method
+    def delete_session(env, sid, options)
       Session.where(_id: sid).delete
 
       options[:drop] ? nil : generate_sid
+    end
+
+    # Rack 1.* method
+    alias get_session find_session
+
+    # Rack 1.* method
+    def set_session(env, sid, session_data, options) # rack 1.x compatibilty
+      write_session(Rack::Request.new(env), sid, session_data, options)
+    end
+
+    # Rack 1.* method
+    def destroy_session(env, sid, options) # rack 1.x compatibilty
+      delete_session(Rack::Request.new(env), sid, options)
     end
 
     def pack(data)
