@@ -111,6 +111,29 @@ The same options can be passed to `FakeCAS`.
 use Rack::FakeCAS, exclude_path: '/api'
 ```
 
+Excluding Requests
+------------------
+
+If the path exclusion is not suitable to ignore the CAS authentication in some parts of your app, you can pass
+`exclude_request_validator` to the middleware with a custom validator. You need to pass a `Proc` object that will accept
+a `Rack::Request` object as a parameter.
+
+```ruby
+use Rack::CAS, server_url: '...', exclude_request_validator: Proc.new { |req| req.env['HTTP_CONTENT_TYPE'] == 'application/json' }
+```
+
+Ignore 401 Intercept
+--------------------
+
+For some requests you might want to ignore the 401 intercept made by the middleware. For example when we want CAS to
+authenticate API requests but leave the redirect handling to the client. For this you can use the
+`ignore_intercept_validator`. You need to pass a `Proc` object that will accept a `Rack::Request` object as a parameter.
+
+```ruby
+use Rack::CAS, server_url: '...', ignore_intercept_validator: Proc.new { |req| req.env['HTTP_CONTENT_TYPE'] == 'application/json' }
+use Rack::CAS, server_url: '...', ignore_intercept_validator: Proc.new { |req| req.env['PATH_INFO'] =~ 'api' }
+```
+
 SSL Cert Verification
 ---------------------
 
