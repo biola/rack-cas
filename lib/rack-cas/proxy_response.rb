@@ -1,3 +1,5 @@
+require 'nokogiri'
+
 module RackCAS
   class ProxyResponse
     class ProxyFailure < StandardError; end
