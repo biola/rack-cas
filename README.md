@@ -20,7 +20,7 @@ Requirements
 ============
 * Ruby >= 1.9.2
 * A working [CAS server](http://casino.rbcas.com)
-* An app that [returns a `401 Unauthorized`](#integration) status when authentication is requried
+* An app that [returns a `401 Unauthorized`](#integration) status when authentication is required
 
 Installation
 ============
