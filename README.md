@@ -1,4 +1,4 @@
-Rack-CAS [![Build Status](https://travis-ci.org/biola/rack-cas.png?branch=master)](https://travis-ci.org/biola/rack-cas)
+Rack-CAS [![Build Status](https://travis-ci.org/biola/rack-cas.svg?branch=master)](https://travis-ci.org/biola/rack-cas) [![Gem Version](https://badge.fury.io/rb/rack-cas.svg)](https://badge.fury.io/rb/rack-cas)
 ========
 Rack-CAS is simple [Rack](http://rack.github.com/) middleware to perform [CAS](http://en.wikipedia.org/wiki/Central_Authentication_Service) client authentication.
 
