@@ -83,7 +83,27 @@ See the [example Sinatra app](https://gist.github.com/adamcrown/a7e7577594690335
 
 ### Single Sign Out ###
 
-Single sign out support outside of Rails is currently untested. We'll be adding instructions here soon.
+You will need to store sessions in session store supported by Rack CAS. 
+
+#### Active Record ####
+Add a migration that looks roughly like
+
+    class AddSessionStore < ActiveRecord::Migration
+    	def change
+    		create_table :sessions do |t|
+    			t.string :cas_ticket
+    			t.string :session_id
+    			t.text :data
+    			t.datetime :created_at
+    			t.datetime :updated_at
+    		end
+    	end
+    end
+
+Then use the middleware with
+
+    require 'rack-cas/session-store/rack/active_record'
+    use Rack::Session::RackCASActiveRecordStore
 
 Configuration
 =============
