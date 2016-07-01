@@ -81,7 +81,7 @@ module RackCAS
       http = Net::HTTP.new(@url.host, @url.inferred_port)
       if @url.scheme == 'https'
         http.use_ssl = true
-        http.verify_mode = RackCAS.config.verify_ssl_cert? ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
+        http.verify_mode = RackCAS.config.verify_ssl_cert ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
       end
 
       http.start do |conn|

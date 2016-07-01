@@ -36,6 +36,14 @@ config.rack_cas.server_url = 'https://cas.example.com/'
 ```
 If the the server URL depends on your environment, you can define it in the according file: `config/environments/<env>.rb`
 
+### Protocol
+
+Since protocol `p3` the protocol is prepended in certain urls. If you wish to use protocol `p3` set the following config variable
+
+`config.rack_cas.protocol = 'p3'`
+
+[For more info](http://jasig.github.io/cas/4.1.x/protocol/CAS-Protocol-Specification.html#cas-uris)
+
 ### Single Logout ###
 
 If you wish to enable [single logout](http://apereo.github.io/cas/4.0.x/installation/Logout-Single-Signout.html) you'll need to modify your configuration as below.
