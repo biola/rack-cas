@@ -1,12 +1,14 @@
 module RackCAS
   class Configuration
-    SETTINGS = [:server_url, :session_store, :exclude_path, :exclude_paths, :extra_attributes_filter, :verify_ssl_cert, :renew, :use_saml_validation, :pgt_callback_url]
+    SETTINGS = [:fake, :server_url, :session_store, :exclude_path, :exclude_paths, :extra_attributes_filter,
+                :verify_ssl_cert, :renew, :use_saml_validation, :ignore_intercept_validator, :exclude_request_validator, 
+                :protocol, :pgt_callback_url]
 
     SETTINGS.each do |setting|
       attr_accessor setting
 
       define_method "#{setting}?" do
-        !(send(setting).nil? || send(setting) == [] || send(setting) == false)
+        ![nil, false, []].include? send(setting)
       end
     end
 
@@ -24,7 +26,7 @@ module RackCAS
           raise ArgumentError, "invalid setting: #{setting}"
         end
 
-        self.public_send "#{setting}=", value
+        public_send "#{setting}=", value
       end
 
       raise ArgumentError, 'server_url is required' unless server_url?

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Rack::CAS do
   let(:server_url) { 'http://example.com/cas' }
-  let(:app_options) { {} }
+  let(:app_options) { {'fake' => false} }
   let(:ticket) { 'ST-0123456789ABCDEFGHIJKLMNOPQRS' }
 
   def app
@@ -76,10 +76,34 @@ describe Rack::CAS do
     its(:body) { should eql 'CAS Single-Sign-Out request intercepted.' }
   end
 
-  describe 'excluded request' do
+  describe 'excluded request by path' do
     let(:app_options) { { exclude_path: '/private', session_store: nil } }
 
     subject { get '/private' }
+    its(:status) { should eql 401 }
+    its(:body) { should eql 'Authorization Required' }
+  end
+
+  describe 'excluded request by request validator' do
+    let(:app_options) {
+      { exclude_request_validator: Proc.new { |req| req.env['HTTP_CONTENT_TYPE'] == 'application/json' },
+        session_store: nil }
+    }
+    subject { get '/private', nil, { 'HTTP_CONTENT_TYPE' => 'application/json' } }
+    its(:status) { should eql 401 }
+    its(:body) { should eql 'Authorization Required' }
+    it 'should not continue the execution' do
+      expect_any_instance_of(CASRequest).to_not receive(:ticket_validation?)
+      subject
+    end
+  end
+
+  describe 'ignore 401 intercept' do
+    let(:app_options) {
+      { ignore_intercept_validator: Proc.new { |req| req.env['HTTP_CONTENT_TYPE'] == 'application/json' },
+        session_store: nil }
+    }
+    subject { get '/private', nil, { 'HTTP_CONTENT_TYPE' => 'application/json' } }
     its(:status) { should eql 401 }
     its(:body) { should eql 'Authorization Required' }
   end

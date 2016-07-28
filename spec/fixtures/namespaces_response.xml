@@ -1,0 +1,15 @@
+<vcu:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas' xmlns:vcu='http://login.vcu.edu/cas'>
+  <vcu:authenticationSuccess>
+    <vcu:user>johnd0</cas:user>
+    <vcu:cn>
+      <![CDATA[---
+- johnd0
+]]>
+    </vcu:cn>
+    <vcu:title>
+      <![CDATA[---
+- Imaginary Person
+]]>
+    </vcu:title>
+  </vcu:authenticationSuccess>
+</vcu:serviceResponse>

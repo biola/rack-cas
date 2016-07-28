@@ -2,6 +2,8 @@ require 'addressable/uri'
 require 'nokogiri'
 
 class CASRequest
+  attr_reader :request
+
   def initialize(request)
     @request = request
   end

@@ -1,0 +1,4 @@
+source "https://rubygems.org"
+
+gem "rack", "2.0.0.alpha"
+gemspec :path => "../"

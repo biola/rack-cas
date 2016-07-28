@@ -13,7 +13,7 @@ module RackCAS
 
     def user
       if success?
-        xml.xpath('/cas:serviceResponse/cas:authenticationSuccess/cas:user').text
+        xml.at('//serviceResponse/authenticationSuccess/user').text
       else
         case failure_code
         when 'INVALID_REQUEST'
@@ -34,16 +34,12 @@ module RackCAS
       raise AuthenticationFailure, failure_message unless success?
 
       # Jasig style
-      if attr_node = xml.at('/cas:serviceResponse/cas:authenticationSuccess/cas:attributes')
-        attr_node.children.each do |node|
-          if node.is_a? Nokogiri::XML::Element
-            attrs[node.name] = node.text
-          end
-        end
+      if attr_node = xml.at('//serviceResponse/authenticationSuccess/attributes')
+        attrs = parse_user_info(attr_node)
 
       # RubyCas-Server style
       else
-        xml.at('/cas:serviceResponse/cas:authenticationSuccess').children.each do |node|
+        xml.at('//serviceResponse/authenticationSuccess').children.each do |node|
           if node.is_a? Nokogiri::XML::Element
             if !node.namespace || !node.namespace.prefix == 'cas'
               # TODO: support JSON encoding
@@ -65,11 +61,11 @@ module RackCAS
     protected
 
     def success?
-      @success ||= !!xml.at('/cas:serviceResponse/cas:authenticationSuccess')
+      @success ||= !!xml.at('//serviceResponse/authenticationSuccess')
     end
 
     def authentication_failure
-      @authentication_failure ||= xml.at('/cas:serviceResponse/cas:authenticationFailure')
+      @authentication_failure ||= xml.at('//serviceResponse/authenticationFailure')
     end
 
     def failure_message
@@ -91,7 +87,7 @@ module RackCAS
       http = Net::HTTP.new(@url.host, @url.inferred_port)
       if @url.scheme == 'https'
         http.use_ssl = true
-        http.verify_mode = RackCAS.config.verify_ssl_cert? ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
+        http.verify_mode = RackCAS.config.verify_ssl_cert ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
       end
 
       http.start do |conn|
@@ -104,7 +100,36 @@ module RackCAS
     def xml
       return @xml unless @xml.nil?
 
-      @xml = Nokogiri::XML(response.body)
+      @xml = Nokogiri::XML(response.body).remove_namespaces!
+    end
+
+    # initially borrowed from omniauth-cas
+    def parse_user_info(node)
+      return nil if node.nil?
+      {}.tap do |hash|
+        node.children.each do |e|
+          unless e.kind_of?(Nokogiri::XML::Text) || e.name == 'proxies'
+            # There are no child elements
+            if e.element_children.count == 0
+              if hash.has_key?(e.name)
+                hash[e.name] = [hash[e.name]] if hash[e.name].is_a? String
+                hash[e.name] << e.content
+              else
+                hash[e.name] = e.content
+              end
+            elsif e.element_children.count
+              # JASIG style extra attributes
+              if e.name == 'attributes'
+                hash.merge!(parse_user_info(e))
+              else
+                hash[e.name] = [] if hash[e.name].nil?
+                hash[e.name] = [hash[e.name]] if hash[e.name].is_a? String
+                hash[e.name].push(parse_user_info(e))
+              end
+            end
+          end
+        end
+      end
     end
   end
 end

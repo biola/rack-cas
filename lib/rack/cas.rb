@@ -16,9 +16,7 @@ class Rack::CAS
     request = Rack::Request.new(env)
     cas_request = CASRequest.new(request)
 
-    if cas_request.path_matches? RackCAS.config.exclude_path || RackCAS.config.exclude_paths
-      return @app.call(env)
-    end
+    return @app.call(env) if exclude_request?(cas_request)
 
     if cas_request.ticket_validation?
       log env, 'rack-cas: Intercepting ticket validation request.'
@@ -44,7 +42,7 @@ class Rack::CAS
     if cas_request.logout?
       log env, 'rack-cas: Intercepting logout request.'
 
-      request.session.clear
+      request.session.send (request.session.respond_to?(:destroy) ? :destroy : :clear)
       return redirect_to server.logout_url(request.params).to_s
     end
 
@@ -57,7 +55,7 @@ class Rack::CAS
 
     response = @app.call(env)
 
-    if response[0] == 401 # access denied
+    if response[0] == 401 && !ignore_intercept?(request) # access denied
       log env, 'rack-cas: Intercepting 401 access denied response. Redirecting to CAS login.'
 
       redirect_to server.login_url(request.url).to_s
@@ -70,6 +68,19 @@ class Rack::CAS
 
   def server
     @server ||= RackCAS::Server.new(RackCAS.config.server_url)
+  end
+
+  def ignore_intercept?(request)
+    return false if (validator = RackCAS.config.ignore_intercept_validator).nil?
+    validator.call(request)
+  end
+
+  def exclude_request?(cas_request)
+    if (validator = RackCAS.config.exclude_request_validator)
+      validator.call(cas_request.request)
+    else
+      cas_request.path_matches? RackCAS.config.exclude_path || RackCAS.config.exclude_paths
+    end
   end
 
   def get_user(service_url, ticket)

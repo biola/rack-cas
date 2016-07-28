@@ -1,4 +1,4 @@
-Rack-CAS [![Build Status](https://travis-ci.org/biola/rack-cas.png?branch=master)](https://travis-ci.org/biola/rack-cas)
+Rack-CAS [![Build Status](https://travis-ci.org/biola/rack-cas.svg?branch=master)](https://travis-ci.org/biola/rack-cas) [![Gem Version](https://badge.fury.io/rb/rack-cas.svg)](https://badge.fury.io/rb/rack-cas)
 ========
 Rack-CAS is simple [Rack](http://rack.github.com/) middleware to perform [CAS](http://en.wikipedia.org/wiki/Central_Authentication_Service) client authentication.
 
@@ -20,7 +20,7 @@ Requirements
 ============
 * Ruby >= 1.9.2
 * A working [CAS server](http://casino.rbcas.com)
-* An app that [returns a `401 Unauthorized`](#integration) status when authentication is requried
+* An app that [returns a `401 Unauthorized`](#integration) status when authentication is required
 
 Installation
 ============
@@ -36,9 +36,17 @@ config.rack_cas.server_url = 'https://cas.example.com/'
 ```
 If the the server URL depends on your environment, you can define it in the according file: `config/environments/<env>.rb`
 
+### Protocol
+
+Since protocol `p3` the protocol is prepended in certain urls. If you wish to use protocol `p3` set the following config variable
+
+`config.rack_cas.protocol = 'p3'`
+
+[For more info](http://jasig.github.io/cas/4.1.x/protocol/CAS-Protocol-Specification.html#cas-uris)
+
 ### Single Logout ###
 
-If you wish to enable [single logout](http://jasig.github.io/cas/4.0.x/installation/Logout-Single-Signout.html) you'll need to modify your configuration as below.
+If you wish to enable [single logout](http://apereo.github.io/cas/4.0.x/installation/Logout-Single-Signout.html) you'll need to modify your configuration as below.
 
 #### Active Record ####
 
@@ -50,7 +58,7 @@ config.rack_cas.session_store = RackCAS::ActiveRecordStore
 Edit your `config/initializers/session_store.rb` file with the following:
 ```ruby
 require 'rack-cas/session_store/rails/active_record'
-YourApp::Application.config.session_store ActionDispatch::Session::RackCasActiveRecordStore
+Rails.application.config.session_store ActionDispatch::Session::RackCasActiveRecordStore
 ```
 Run:
 ```ruby
@@ -83,7 +91,27 @@ See the [example Sinatra app](https://gist.github.com/adamcrown/a7e7577594690335
 
 ### Single Sign Out ###
 
-Single sign out support outside of Rails is currently untested. We'll be adding instructions here soon.
+You will need to store sessions in session store supported by Rack CAS. 
+
+#### Active Record ####
+Add a migration that looks roughly like
+
+    class AddSessionStore < ActiveRecord::Migration
+    	def change
+    		create_table :sessions do |t|
+    			t.string :cas_ticket
+    			t.string :session_id
+    			t.text :data
+    			t.datetime :created_at
+    			t.datetime :updated_at
+    		end
+    	end
+    end
+
+Then use the middleware with
+
+    require 'rack-cas/session-store/rack/active_record'
+    use Rack::Session::RackCASActiveRecordStore
 
 Configuration
 =============
@@ -109,6 +137,29 @@ use Rack::CAS, server_url: '...', exclude_paths: ['/api', /\.json/]
 The same options can be passed to `FakeCAS`.
 ```ruby
 use Rack::FakeCAS, exclude_path: '/api'
+```
+
+Excluding Requests
+------------------
+
+If the path exclusion is not suitable to ignore the CAS authentication in some parts of your app, you can pass
+`exclude_request_validator` to the middleware with a custom validator. You need to pass a `Proc` object that will accept
+a `Rack::Request` object as a parameter.
+
+```ruby
+use Rack::CAS, server_url: '...', exclude_request_validator: Proc.new { |req| req.env['HTTP_CONTENT_TYPE'] == 'application/json' }
+```
+
+Ignore 401 Intercept
+--------------------
+
+For some requests you might want to ignore the 401 intercept made by the middleware. For example when we want CAS to
+authenticate API requests but leave the redirect handling to the client. For this you can use the
+`ignore_intercept_validator`. You need to pass a `Proc` object that will accept a `Rack::Request` object as a parameter.
+
+```ruby
+use Rack::CAS, server_url: '...', ignore_intercept_validator: Proc.new { |req| req.env['HTTP_CONTENT_TYPE'] == 'application/json' }
+use Rack::CAS, server_url: '...', ignore_intercept_validator: Proc.new { |req| req.env['PATH_INFO'] =~ 'api' }
 ```
 
 SSL Cert Verification
