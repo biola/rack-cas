@@ -19,7 +19,7 @@ describe RackCAS::URL do
 
   describe :add_params do
     subject { url.add_params(appended: 'param') }
-    its(:query) { should eql 'appended=param&param1=value1&param2=value2' }
+    its(:query) { should eql 'param1=value1&param2=value2&appended=param' }
   end
 
   describe :remove_param do

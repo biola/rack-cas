@@ -15,13 +15,13 @@ describe RackCAS::Server do
 
     context 'with params' do
       subject { server.login_url(service_url, gateway: 'true') }
-      its(:to_s) { should eql 'http://example.com/cas/login?gateway=true&service=http%3A%2F%2Fexample.org%2Fwhatever' }
+      its(:to_s) { should eql 'http://example.com/cas/login?service=http%3A%2F%2Fexample.org%2Fwhatever&gateway=true' }
     end
 
     context 'with renew = true' do
       before { RackCAS.config.stub(renew: true) }
       subject { server.login_url(service_url) }
-      its(:to_s) { should eql 'http://example.com/cas/login?renew=true&service=http%3A%2F%2Fexample.org%2Fwhatever' }
+      its(:to_s) { should eql 'http://example.com/cas/login?service=http%3A%2F%2Fexample.org%2Fwhatever&renew=true' }
     end
   end
 
