@@ -7,7 +7,7 @@ module RackCAS
       # Addressable to replace + spaces with %20 spaces. Standardizing on %20
       # should prevent service lookup issues due to encoding differences.
       super.tap do |u|
-        u.query_values = u.query_values
+        u.query_values = u.query_values(Array)
       end
     end
 
