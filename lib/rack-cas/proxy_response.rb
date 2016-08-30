@@ -15,7 +15,7 @@ module RackCAS
 
     def proxy_ticket
       if success?
-        xml.xpath('/cas:serviceResponse/cas:proxySuccess/cas:proxyTicket').text
+        xml.xpath('//serviceResponse/proxySuccess/proxyTicket').text
       else
         case failure_code
         when 'INVALID_REQUEST'
@@ -33,11 +33,11 @@ module RackCAS
     protected
 
     def success?
-      @success ||= !!xml.at('/cas:serviceResponse/cas:proxySuccess')
+      @success ||= !!xml.at('//serviceResponse/proxySuccess')
     end
 
     def proxy_failure
-      @proxy_failure ||= xml.at('/cas:serviceResponse/cas:proxyFailure')
+      @proxy_failure ||= xml.at('//serviceResponse/proxyFailure')
     end
 
     def failure_message
