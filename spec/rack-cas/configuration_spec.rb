@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'rack-cas/configuration'
 
 describe RackCAS::Configuration do
+
   subject { RackCAS::Configuration.new }
 
   context 'when the attribute is neither nil, an empty array, nor false' do

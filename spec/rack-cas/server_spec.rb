@@ -15,13 +15,13 @@ describe RackCAS::Server do
 
     context 'with params' do
       subject { server.login_url(service_url, gateway: 'true') }
-      its(:to_s) { should eql 'http://example.com/cas/login?gateway=true&service=http%3A%2F%2Fexample.org%2Fwhatever' }
+      its(:to_s) { should eql 'http://example.com/cas/login?service=http%3A%2F%2Fexample.org%2Fwhatever&gateway=true' }
     end
 
     context 'with renew = true' do
       before { RackCAS.config.stub(renew: true) }
       subject { server.login_url(service_url) }
-      its(:to_s) { should eql 'http://example.com/cas/login?renew=true&service=http%3A%2F%2Fexample.org%2Fwhatever' }
+      its(:to_s) { should eql 'http://example.com/cas/login?service=http%3A%2F%2Fexample.org%2Fwhatever&renew=true' }
     end
   end
 
@@ -42,11 +42,19 @@ describe RackCAS::Server do
     end
   end
 
-  describe :validate_service do
+  describe :validate_service_without_pgt_url do
     subject { server.validate_service(service_url, ticket) }
-    its(:length) { should eql 2 }
+    its(:length) { should eql 3 }
     its(:first) { should eql 'johnd0' }
-    its(:last) { should be_kind_of Hash }
+    its(:last) { should be nil }
+  end
+
+  describe :validate_service_with_pgt_url do
+
+    subject { server.validate_service(service_url, ticket, 'http://example.com/callback') }
+    its(:length) { should eql 3 }
+    its(:first) { should eql 'johnd0' }
+    its(:last) { should eql 'PGTIOU-1234567890' }
   end
 
   describe :validate_service_url do    

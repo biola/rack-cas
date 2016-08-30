@@ -24,13 +24,13 @@ describe CASRequest do
   end
 
   context 'invalid ticket' do
-    before { get '/private/something?ticket=BLARG' }
+    before { get '/private/something?ticket=BL+ARG' }
     its(:ticket_validation?) { should be false }
     its(:ticket) { should be nil }
   end
 
   context 'short ticket' do
-    before { get '/private/something?ticket=ST-' }
+    before { get '/private/something?ticket=' }
     its(:ticket_validation?) { should be false }
     its(:ticket) { should be nil }
   end

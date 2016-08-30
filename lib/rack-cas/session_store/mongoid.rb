@@ -1,5 +1,15 @@
 module RackCAS
   module MongoidStore
+
+    class ProxyGrantingTicketIou
+      include Mongoid::Document
+      include Mongoid::Timestamps
+
+      field :_id, type: String
+      field :proxy_granting_ticket_iou, type: String
+      field :proxy_granting_ticket, type: String
+    end
+
     class Session
       include Mongoid::Document
       include Mongoid::Timestamps
@@ -15,6 +25,17 @@ module RackCAS
       field :cas_ticket, type: String
     end
 
+    def self.create_proxy_granting_ticket(pgt_iou, pgt)
+      ProxyGrantingTicketIou.create!(proxy_granting_ticket_iou: pgt_iou, proxy_granting_ticket: pgt)
+    end
+
+    def self.proxy_granting_ticket_for(pgt_iou = nil)
+      if pgt_iou
+        proxy_granting_ticket_iou = ProxyGrantingTicketIou.where(proxy_granting_ticket_iou: pgt_iou).first || nil
+        proxy_granting_ticket_iou.proxy_granting_ticket if proxy_granting_ticket_iou
+      end
+    end
+
     def self.destroy_session_by_cas_ticket(cas_ticket)
       affected = Session.where(cas_ticket: cas_ticket).delete
       affected == 1
@@ -23,6 +44,7 @@ module RackCAS
     def self.prune(after = nil)
       after ||= Time.now - 2592000 # 30 days ago
       Session.where(:updated_at.lte => after).delete
+      ProxyGrantingTicketIou.where(:updated_at.lte => after).delete
     end
 
     private

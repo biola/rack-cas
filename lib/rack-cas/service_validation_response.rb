@@ -52,6 +52,12 @@ module RackCAS
       attrs
     end
 
+    def proxy_granting_ticket_iou
+      if success?
+        @proxy_granting_ticket_iou ||= xml.at('//serviceResponse/authenticationSuccess/proxyGrantingTicket').text
+      end
+    end
+
     protected
 
     def success?

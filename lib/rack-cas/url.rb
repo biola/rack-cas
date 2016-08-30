@@ -7,7 +7,7 @@ module RackCAS
       # Addressable to replace + spaces with %20 spaces. Standardizing on %20
       # should prevent service lookup issues due to encoding differences.
       super.tap do |u|
-        u.query_values = u.query_values
+        u.query_values = u.query_values(Array)
       end
     end
 
@@ -19,9 +19,9 @@ module RackCAS
 
     def add_params(params)
       self.tap do |u|
-        u.query_values = (u.query_values || {}).tap do |qv|
+        u.query_values = (u.query_values(Array) || []).tap do |qv|
           params.each do |key, value|
-            qv[key] = value
+            qv << [key, value]
           end
         end
       end
@@ -34,9 +34,9 @@ module RackCAS
     # params can be an array or a hash
     def remove_params(params)
       self.tap do |u|
-        u.query_values = (u.query_values || {}).tap do |qv|
+        u.query_values = (u.query_values(Array) || []).tap do |qv|
           params.each do |key, value|
-            qv.delete key
+            qv.reject! { |param| param.first == key }
           end
         end
         if u.query_values.empty?
