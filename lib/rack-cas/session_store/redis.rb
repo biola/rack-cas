@@ -1,8 +1,7 @@
 module RackCAS
   module RedisStore
     class Session
-      @@client = Redis.new(path: '/tmp/redis.sock',driver: :hiredis)
-
+      @@client = (RackCAS.config.redis_options ? Redis.new(RackCAS.config.redis_options) : Redis.new)
       def self.find_by_id(session_id)
         session = @@client.get("rack_cas_session:#{session_id}")
         session ? {'sid' => session_id, 'data' => session} : session
