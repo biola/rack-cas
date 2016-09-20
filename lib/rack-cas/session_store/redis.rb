@@ -1,35 +1,42 @@
 module RackCAS
   module RedisStore
     class Session
-      @@client = (RackCAS.config.redis_options ? Redis.new(RackCAS.config.redis_options) : Redis.new)
+      @client = nil
+
+      def self.client
+        @client ||= (RackCAS.config.redis_options? ? Redis.new(RackCAS.config.redis_options) : Redis.new)
+        return @client
+      end
+
       def self.find_by_id(session_id)
-        session = @@client.get("rack_cas_session:#{session_id}")
+        session = self.client.get("rack_cas_session:#{session_id}")
         session ? {'sid' => session_id, 'data' => session} : session
       end
+
       def self.write(session_id:, data:, cas_ticket: )
         #create a row with the session_id and the data
         #create a row with the cas_ticket acting as a reverse index
-        results = @@client.pipelined do
-          @@client.set("rack_cas_session:#{session_id}",data)
-          @@client.expireat("rack_cas_session:#{session_id}",30.days.from_now.to_i)
-          @@client.set("rack_cas_ticket:#{cas_ticket}","rack_cas_session:#{session_id}")
-          @@client.expireat("rack_cas_ticket:#{cas_ticket}",30.days.from_now.to_i)
+        results = self.client.pipelined do
+          self.client.set("rack_cas_session:#{session_id}",data)
+          self.client.expireat("rack_cas_session:#{session_id}",30.days.from_now.to_i)
+          self.client.set("rack_cas_ticket:#{cas_ticket}","rack_cas_session:#{session_id}")
+          self.client.expireat("rack_cas_ticket:#{cas_ticket}",30.days.from_now.to_i)
         end
 
         results == ["OK",true,"OK",true] ? session_id : false
       end
 
       def self.destroy_by_cas_ticket(cas_ticket)
-        session_id = @@client.get("rack_cas_ticket:#{cas_ticket}")
-        results = @@client.pipelined do
-          @@client.del("rack_cas_ticket:#{cas_ticket}")
-          @@client.del(session_id)
+        session_id = self.client.get("rack_cas_ticket:#{cas_ticket}")
+        results = self.client.pipelined do
+          self.client.del("rack_cas_ticket:#{cas_ticket}")
+          self.client.del(session_id)
         end
         return results[1]
       end
 
       def self.delete(session_id)
-        @@client.del("rack_cas_session:#{session_id}")
+        self.client.del("rack_cas_session:#{session_id}")
       end
     end
 
@@ -43,6 +50,7 @@ module RackCAS
     end
 
     private
+
 
     # Rack 2.0 method
     def find_session(env, sid)
