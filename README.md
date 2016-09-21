@@ -77,6 +77,24 @@ Edit your `config/initializers/session_store.rb` file with the following:
 require 'rack-cas/session_store/rails/mongoid'
 YourApp::Application.config.session_store ActionDispatch::Session::RackCasMongoidStore
 ```
+#### Redis ####
+
+Set the `session_store` in your `config/application.rb`:
+```ruby
+require 'rack-cas/session_store/redis'
+config.rack_cas.session_store = RackCAS::RedisStore
+```
+Edit your `config/initializers/session_store.rb` file with the following:
+```ruby
+require 'rack-cas/session_store/rails/redis'
+YourApp::Application.config.session_store ActionDispatch::Session::RackCasRedisStore
+```
+Optionally, Set the `redis_options` in your `config/application.rb`.
+You can specify anything `Redis.new` allows.
+For example:
+```ruby
+config.rack_cas.redis_options = {path: '/tmp/redis.sock',driver: :hiredis}
+```
 Sinatra and Other Rack-Compatible Frameworks
 --------------------------------------------
 
