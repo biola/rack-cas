@@ -44,7 +44,7 @@ module RackCAS
     protected
 
     def success?
-      @success ||= xml.at('//Response/Status/StatusCode/@Value').text == 'saml1p:Success'
+      @success ||= xml.at('//Response/Status/StatusCode/@Value').text =~ /saml1?p:Success/
     end
 
     def authentication_failure
