@@ -52,7 +52,10 @@ class Rack::CAS
     if response[0] == 401 && !ignore_intercept?(request) # access denied
       log env, 'rack-cas: Intercepting 401 access denied response. Redirecting to CAS login.'
 
-      redirect_to server.login_url(request.url).to_s
+      # Where possible for POST, PUT, DELETE requests we want to use the referral url rather than
+      # the request url itself, as the CAS server ignores the type of request and simply redirects
+      service_url = (request.get? || request.referrer.nil?) ? request.url : request.referrer
+      redirect_to server.login_url(service_url).to_s
     else
       response
     end
