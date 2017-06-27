@@ -13,7 +13,7 @@ module RackCAS
       base_params = {service: service_url}
       base_params[:renew] = true if RackCAS.config.renew?
 
-      url = RackCAS.config.login_url? ? RackCAS.config.login_url : @url.dup.append_path('login')
+      url = RackCAS.config.login_url? ? RackCAS::URL.parse(RackCAS.config.login_url) : @url.dup.append_path('login')
       url.add_params(base_params.merge(params))
     end
 
