@@ -4,7 +4,7 @@ module RackCAS
     end
 
     def self.destroy_session_by_cas_ticket(cas_ticket)
-      affected = Session.delete_all(cas_ticket: cas_ticket)
+      affected = Session.where(cas_ticket: cas_ticket).delete_all
       affected == 1
     end
 
