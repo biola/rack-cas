@@ -14,12 +14,6 @@ describe Rack::CAS do
     its(:status) { should eql 200 }
   end
 
-  describe 'auth required request' do
-    subject { get '/private' }
-    its(:status) { should eql 302 }
-    its(:location) { should match %r{http://example.com/cas/login\?service=http%3A%2F%2Fexample.org%2Fprivate} }
-  end
-
   describe 'ticket validation request' do
     subject { get '/private?search=blah&ticket=ST-0123456789ABCDEFGHIJKLMNOPQRS' }
     its(:status) { should eql 302 }
@@ -106,5 +100,20 @@ describe Rack::CAS do
     subject { get '/private', nil, { 'HTTP_CONTENT_TYPE' => 'application/json' } }
     its(:status) { should eql 401 }
     its(:body) { should eql 'Authorization Required' }
+  end
+
+  describe 'auth required request' do
+    describe 'without service configured' do
+      subject { get '/private' }
+      its(:status) { should eql 302 }
+      its(:location) { should match %r{http://example.com/cas/login\?service=http%3A%2F%2Fexample.org%2Fprivate} }
+    end
+
+    describe 'with service configured' do
+      let(:app_options) { { 'fake' => false, service: 'https://example.info' } }
+      subject { get '/private' }
+      its(:status) { should eql 302 }
+      its(:location) { should match %r{http://example.com/cas/login\?service=https%3A%2F%2Fexample.info%2Fprivate} }
+    end
   end
 end
