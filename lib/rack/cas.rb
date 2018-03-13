@@ -21,16 +21,18 @@ class Rack::CAS
     if cas_request.ticket_validation?
       log env, 'rack-cas: Intercepting ticket validation request.'
 
+      service_url = RackCAS.config.service? ? RackCAS.config.service : cas_request.service_url
+
       begin
         user, extra_attrs = get_user(request.url, cas_request.ticket)
       rescue RackCAS::ServiceValidationResponse::TicketInvalidError, RackCAS::SAMLValidationResponse::TicketInvalidError
         log env, 'rack-cas: Invalid ticket. Redirecting to CAS login.'
 
-        return redirect_to server.login_url(cas_request.service_url).to_s
+        return redirect_to server.login_url(service_url).to_s
       end
 
       store_session request, user, cas_request.ticket, extra_attrs
-      return redirect_to cas_request.service_url
+      return redirect_to service_url
     end
 
     if cas_request.logout?
@@ -52,7 +54,17 @@ class Rack::CAS
     if response[0] == 401 && !ignore_intercept?(request) # access denied
       log env, 'rack-cas: Intercepting 401 access denied response. Redirecting to CAS login.'
 
-      redirect_to server.login_url(request.url).to_s
+      url = if RackCAS.config.service?
+              configured_service_url = RackCAS::URL.parse(RackCAS.config.service)
+              request_url            = RackCAS::URL.parse(request.url)
+              request_url.host       = configured_service_url.host
+              request_url.scheme     = configured_service_url.scheme
+              request_url.to_s
+            else
+              cas_request.service_url
+            end
+
+      redirect_to server.login_url(url).to_s
     else
       response
     end
