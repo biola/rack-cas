@@ -23,6 +23,12 @@ describe RackCAS::Server do
       subject { server.login_url(service_url) }
       its(:to_s) { should eql 'http://example.com/cas/login?renew=true&service=http%3A%2F%2Fexample.org%2Fwhatever' }
     end
+
+    context 'with custom login_url' do
+      before { RackCAS.config.stub(login_url: 'http://example.com/cas/login?hi=bye') }
+      subject { server.login_url(service_url) }
+      its(:to_s) { should eql 'http://example.com/cas/login?hi=bye&service=http%3A%2F%2Fexample.org%2Fwhatever' }
+    end
   end
 
   describe :logout_url do
@@ -49,7 +55,7 @@ describe RackCAS::Server do
     its(:last) { should be_kind_of Hash }
   end
 
-  describe :validate_service_url do    
+  describe :validate_service_url do
     subject { server.send(:validate_service_url, service_url, ticket) }
     its(:to_s) { should eql 'http://example.com/cas/serviceValidate?service=http%3A%2F%2Fexample.org%2Fwhatever&ticket=ST-0123456789ABCDEFGHIJKLMNOPQRS'}
   end
