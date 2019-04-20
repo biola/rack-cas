@@ -1,7 +1,8 @@
 module RackCAS
   class Configuration
     SETTINGS = [:fake, :fake_attributes, :server_url, :session_store, :exclude_path, :exclude_paths, :extra_attributes_filter,
-                :verify_ssl_cert, :renew, :use_saml_validation, :ignore_intercept_validator, :exclude_request_validator, :protocol,:redis_options]
+                :verify_ssl_cert, :renew, :use_saml_validation, :ignore_intercept_validator, :exclude_request_validator, :protocol,
+                :redis_options, :login_url, :service]
 
 
     SETTINGS.each do |setting|

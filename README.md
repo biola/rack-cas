@@ -109,7 +109,7 @@ See the [example Sinatra app](https://gist.github.com/adamcrown/a7e7577594690335
 
 ### Single Sign Out ###
 
-You will need to store sessions in session store supported by Rack CAS. 
+You will need to store sessions in session store supported by Rack CAS.
 
 #### Active Record ####
 Add a migration that looks roughly like
@@ -166,6 +166,15 @@ a `Rack::Request` object as a parameter.
 
 ```ruby
 use Rack::CAS, server_url: '...', exclude_request_validator: Proc.new { |req| req.env['HTTP_CONTENT_TYPE'] == 'application/json' }
+```
+
+Service URL
+--------------------
+
+Sometimes you need to force the `service=` attribute on login requests, and not just use the request url in an automatic way.
+
+```ruby
+use Rack::CAS, service: 'http://anotherexample.com'
 ```
 
 Ignore 401 Intercept
