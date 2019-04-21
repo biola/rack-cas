@@ -1,9 +1,12 @@
 language: ruby
 rvm:
-  - 2.1.8
-  - 2.2.4
-  - 2.3.3
-  - 2.4.0
+  - 2.0.0
+  - 2.1.10
+  - 2.2.10
+  - 2.3.8
+  - 2.4.6
+  - 2.5.5
+  - 2.6.2
 script: bundle exec rspec
 before_install:
   # fixes Travis CI error: NoMethodError: undefined method `spec' for nil:NilClass
@@ -13,8 +16,6 @@ gemfile:
   - gemfiles/rack-2.0.gemfile
 matrix:
   exclude:
-    - rvm: 1.9.3
-      gemfile: gemfiles/rack-2.0.gemfile
     - rvm: 2.0.0
       gemfile: gemfiles/rack-2.0.gemfile
     - rvm: 2.1.8
