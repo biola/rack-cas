@@ -24,7 +24,7 @@ module RackCAS
         sid = generate_sid
         data = nil
       else
-        unless session = (Session.where(session_id: sid.private_id).first || Session.where(session_id: sid.public_id).first)
+        unless session = Session.where(session_id: sid.private_id).first
           session = {}
           # force generation of new sid since there is no associated session
           sid = generate_sid
