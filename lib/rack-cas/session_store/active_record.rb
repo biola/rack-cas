@@ -1,5 +1,8 @@
+require 'rack/session/abstract/id'
+
 module RackCAS
-  module ActiveRecordStore
+  class ActiveRecordStore < Rack::Session::Abstract::PersistedSecure
+
     class Session < ActiveRecord::Base
     end
 
@@ -21,7 +24,7 @@ module RackCAS
         sid = generate_sid
         data = nil
       else
-        unless session = Session.where(session_id: sid).first
+        unless session = (Session.where(session_id: sid.private_id).first || Session.where(session_id: sid.public_id).first)
           session = {}
           # force generation of new sid since there is no associated session
           sid = generate_sid
@@ -37,35 +40,23 @@ module RackCAS
       cas_ticket = (session_data['cas']['ticket'] unless session_data['cas'].nil?)
 
       session = if ActiveRecord.respond_to?(:version) && ActiveRecord.version >= Gem::Version.new('4.0.0')
-        Session.where(session_id: sid).first_or_initialize
+        Session.where(session_id: sid.private_id).first_or_initialize
       else
-        Session.find_or_initialize_by_session_id(sid)
+        Session.find_or_initialize_by_session_id(sid.private_id)
       end
       session.data = pack(session_data)
       session.cas_ticket = cas_ticket
       success = session.save
 
-      success ? session.session_id : false
+      success ? sid : false
     end
 
     # Rack 2.0 method
     def delete_session(req, sid, options)
-      Session.where(session_id: sid).delete_all
+      Session.where(session_id: sid.private_id).delete_all
+      Session.where(session_id: sid.public_id).delete_all
 
       options[:drop] ? nil : generate_sid
-    end
-
-    # Rack 1.* method
-    alias get_session find_session
-
-    # Rack 1.* method
-    def set_session(env, sid, session_data, options) # rack 1.x compatibilty
-      write_session(Rack::Request.new(env), sid, session_data, options)
-    end
-
-    # Rack 1.* method
-    def destroy_session(env, sid, options) # rack 1.x compatibilty
-      delete_session(Rack::Request.new(env), sid, options)
     end
 
     def pack(data)
