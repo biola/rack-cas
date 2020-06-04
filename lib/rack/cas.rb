@@ -102,7 +102,7 @@ class Rack::CAS
   end
 
   def redirect_to(url, status=302)
-    [ status, { 'Location' => url, 'Content-Type' => 'text/plain' }, ["Redirecting you to #{url}"] ]
+    [ status, { 'Location' => url, 'Content-Type' => 'text/plain', 'Cache-Control' => 'private' }, ["Redirecting you to #{url}"] ]
   end
 
   def log(env, message, level = :info)
