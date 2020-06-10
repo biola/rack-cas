@@ -4,7 +4,7 @@ module RackCAS
       include Mongoid::Document
       include Mongoid::Timestamps
 
-      field :_id, type: String
+      field :_id, type: String unless Mongoid::VERSION.split('.')[0].to_i > 5
       if defined? Moped::BSON
         # Mongoid < 4
         field :data, type: Moped::BSON::Binary, default: Moped::BSON::Binary.new(:generic, Marshal.dump({}))
