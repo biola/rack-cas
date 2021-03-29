@@ -44,6 +44,9 @@ module RackCAS
             if !node.namespace || !node.namespace.prefix == 'cas'
               # TODO: support JSON encoding
               attrs[node.name] = YAML.load node.text.strip
+            else
+              attrs['cas'] = {} unless attrs['cas']
+              attrs['cas'][node.name] = YAML.load(node.text.strip)
             end
           end
         end
