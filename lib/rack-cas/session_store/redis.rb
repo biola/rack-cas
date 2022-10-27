@@ -13,14 +13,14 @@ module RackCAS
         session ? {'sid' => session_id, 'data' => session} : session
       end
 
-      def self.write(session_id:, data:, cas_ticket: )
+      def self.write(session_id:, data:, cas_ticket:, expires_in: nil)
         #create a row with the session_id and the data
         #create a row with the cas_ticket acting as a reverse index
         results = self.client.pipelined do
           self.client.set("rack_cas_session:#{session_id}",data)
-          self.client.expireat("rack_cas_session:#{session_id}",30.days.from_now.to_i)
+          self.client.expireat("rack_cas_session:#{session_id}",expires_in.present? ? expires_in.from_now.to_i : 30.days.from_now.to_i)
           self.client.set("rack_cas_ticket:#{cas_ticket}","rack_cas_session:#{session_id}")
-          self.client.expireat("rack_cas_ticket:#{cas_ticket}",30.days.from_now.to_i)
+          self.client.expireat("rack_cas_ticket:#{cas_ticket}",expires_in.present? ? expires_in.from_now.to_i : 30.days.from_now.to_i)
         end
 
         results == ["OK",true,"OK",true] ? session_id : false
@@ -72,8 +72,7 @@ module RackCAS
     # Rack 2.0 method
     def write_session(env, sid, session_data, options)
       cas_ticket = (session_data['cas']['ticket'] unless session_data['cas'].nil?)
-
-      success = Session.write(session_id: sid, data: pack(session_data), cas_ticket: cas_ticket)
+      success = Session.write(session_id: sid, data: pack(session_data), cas_ticket: cas_ticket, expires_in: options[:expire_after])
 
       success ? sid : false
     end
