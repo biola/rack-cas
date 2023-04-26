@@ -143,6 +143,11 @@ In your `config/application.rb`:
 config.rack_cas.extra_attributes_filter = %w(some_attribute some_other_attribute)
 ```
 
+Depending on your CAS implementation and space considerations, you can also choose to exclude **all** extra attributes from being saved in the session store.
+```ruby
+config.rack_cas.exclude_extra_attributes_from_session = true
+```
+
 Excluding Paths
 ---------------
 
