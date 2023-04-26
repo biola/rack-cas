@@ -35,6 +35,14 @@ describe Rack::CAS do
       it { should_not have_key 'title' }
     end
 
+    context 'with exclude_extra_attributes_from_session set' do
+      let(:app_options) { { exclude_extra_attributes_from_session: true } }
+
+      before { get '/private?ticket=ST-0123456789ABCDEFGHIJKLMNOPQRS' }
+      subject { last_request.session['cas']['extra_attributes'] }
+      it { should be_empty }
+    end
+
     context 'with an invalid ticket' do
       before { RackCAS::ServiceValidationResponse.any_instance.stub(:user) { raise RackCAS::ServiceValidationResponse::TicketInvalidError } }
       its(:status) { should eql 302 }
