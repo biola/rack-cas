@@ -207,6 +207,15 @@ The CAS standard allows for a `renew=true` parameter to be passed to the CAS ser
 config.rack_cas.renew = true
 ```
 
+Extra query parameters to serviceValidate
+-----------------------------------------
+
+Some CAS servers needs extra query parameters to be passed to serviceValidate. These can be configured by adding the following to `config/application.rb`:
+
+```ruby
+config.rack_cas.extra_params_validate = { key: 'verysecret', location: 'here' }
+```
+
 Integration
 ===========
 Your app should __return a [401 status](http://httpstatus.es/401)__ whenever a request is made that requires authentication. Rack-CAS will catch these responses and attempt to authenticate via your CAS server.

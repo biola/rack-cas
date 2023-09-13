@@ -24,25 +24,28 @@ module RackCAS
       end
     end
 
-    def validate_service(service_url, ticket)
+    def validate_service(service_url, ticket, params = {})
+      params = RackCAS.config.extra_params_validate
       unless RackCAS.config.use_saml_validation?
-        response = ServiceValidationResponse.new validate_service_url(service_url, ticket)
+        response = ServiceValidationResponse.new validate_service_url(service_url, ticket, params)
       else
-        response = SAMLValidationResponse.new saml_validate_url(service_url), ticket
+        response = SAMLValidationResponse.new saml_validate_url(service_url, params), ticket
       end
       [response.user, response.extra_attributes]
     end
 
     protected
 
-    def saml_validate_url(service_url)
+    def saml_validate_url(service_url, params = {})
       service_url = URL.parse(service_url).remove_param('ticket').to_s
-      @url.dup.append_path(path_for_protocol('samlValidate')).add_params(TARGET: service_url)
+      base_params = {TARGET: service_url}
+      @url.dup.append_path(path_for_protocol('samlValidate')).add_params(base_params.merge(params))
     end
 
-    def validate_service_url(service_url, ticket)
+    def validate_service_url(service_url, ticket, params = {})
       service_url = URL.parse(service_url).remove_param('ticket').to_s
-      @url.dup.append_path(path_for_protocol('serviceValidate')).add_params(service: service_url, ticket: ticket)
+      base_params = {service: service_url, ticket: ticket}
+      @url.dup.append_path(path_for_protocol('serviceValidate')).add_params(base_params.merge(params))
     end
 
     def path_for_protocol(path)
