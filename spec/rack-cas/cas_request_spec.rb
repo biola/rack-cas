@@ -36,7 +36,7 @@ describe CASRequest do
   end
 
   context 'single sign out request' do
-    before { post "/?logoutRequest=#{URI.encode(fixture('single_sign_out_request.xml'))}" }
+    before { post "/?logoutRequest=#{URI::Parser.new.escape(fixture('single_sign_out_request.xml'))}" }
     its(:ticket) { should eql 'ST-0123456789ABCDEFGHIJKLMNOPQRS' }
     its(:single_sign_out?) { should be true }
     its(:logout?) { should be false }
